@@ -4,7 +4,7 @@ interface Props {
   
 }
 
-const Dashboard: FunctionComponent<Props> = ({})  => {
+const Dashboard: FunctionComponent<Props> = ()  => {
     return (
         <div>
             Dashboard

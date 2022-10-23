@@ -1,11 +1,16 @@
 import { Dashboard } from "../containers/dashboardContainer";
-import { Login } from "../containers/loginContainer";
+import { Login, Register } from "../containers/loginContainer";
 import { RouteInterface } from "../contracts/routeInterface";
 
 export const routeList: RouteInterface[] = [{
     name: 'Login',
     path: '/login',
     component: Login,
+    routetype: 'non-drawer'
+}, {
+    name: 'Register',
+    path: '/register',
+    component: Register,
     routetype: 'non-drawer'
 }, {
     name: 'Dashboard',

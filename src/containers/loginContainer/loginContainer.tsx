@@ -1,14 +1,105 @@
-import { FunctionComponent} from 'react';
+import { FunctionComponent, useState } from 'react';
+import { useNavigate } from "react-router-dom";
+import { Box, OutlinedInput, InputAdornment, IconButton, FormControl, InputLabel, Button, Typography, Grid } from '@mui/material';
+import { darken } from '@mui/material/styles';
+import Logo from '../../components/common/logo';
+import PhoneInput from 'react-phone-input-2'
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import { themeProperties } from '../../constants/themeProperties';
+
+const style = {
+    loginButton: {
+        width: '100%',
+        marginTop: '13px',
+        backgroundColor: themeProperties.colors.button,
+        '&:hover': {
+            backgroundColor: darken(themeProperties.colors.button, 0.1),
+        },
+    }
+}
 
 interface Props {
   
 }
 
-const Login: FunctionComponent<Props> = ({})  => {
+const Login: FunctionComponent<Props> = ()  => {
+    const navigate = useNavigate();
+
+    const [phoneNumber, setPhoneNumber] = useState<string>('')
+    const [showPassword, setShowPassword] = useState<boolean>(false)
+    const [password, setPassword] = useState<string>('')
+
+    const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
+        event.preventDefault();
+    };
+
     return (
-        <div>
-            Login
-        </div>
+        <Box 
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            minHeight="97vh"
+        >
+            <Grid 
+                spacing={3}
+                container
+                direction="row"
+                justifyContent="center"
+                alignItems="center"
+            >
+                <Grid item xs={12} md={4}>
+                    <Box 
+                        display="flex"
+                        justifyContent="center"
+                        alignItems="center"
+                        flexDirection={'column'}
+                        bgcolor={themeProperties.colors.secondary}
+                        borderRadius={'15px'}
+                        p={'30px'}
+                    >
+                        <Logo />
+                        <PhoneInput
+                            containerStyle={{marginTop: '40px', color: themeProperties.colors.textPrimary, fontSize: themeProperties.fontSize.xs}}
+                            inputStyle={{color: themeProperties.colors.textPrimary, fontSize: themeProperties.fontSize.xs, width: '100%'}}
+                            specialLabel={'Mobile Number'}
+                            country={'in'}
+                            placeholder={''}
+                            value={phoneNumber}
+                            onChange={value => setPhoneNumber(value)}
+                        />
+                        <FormControl sx={{width: '100%', marginTop: '13px', color: themeProperties.colors.textPrimary, background: themeProperties.colors.white}} variant="outlined">
+                            <InputLabel htmlFor="outlined-adornment-password" sx={{fontSize: themeProperties.fontSize.xs}}>Password</InputLabel>
+                            <OutlinedInput
+                                sx={{fontSize: themeProperties.fontSize.xs}}
+                                id="outlined-adornment-password"
+                                label={'Password'}
+                                type={showPassword ? 'text' : 'password'}
+                                value={password}
+                                onChange={(event) => setPassword(event.target.value)}
+                                endAdornment={
+                                <InputAdornment position="end">
+                                    <IconButton
+                                        onClick={() => setShowPassword(prev => !prev)}
+                                        onMouseDown={handleMouseDownPassword}
+                                        edge="end"
+                                    >
+                                        {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
+                                    </IconButton>
+                                </InputAdornment>
+                                }
+                            />
+                        </FormControl>
+                        <Button variant="contained" disableElevation sx={style.loginButton}>
+                            Login
+                        </Button>
+                        <Typography sx={{marginTop: '13px', fontSize: themeProperties.fontSize.xs}}>
+                            New here ? <span style={{color: themeProperties.colors.button, cursor: 'pointer'}} onClick={() => navigate('/register')}>Create an Account</span>
+                        </Typography>
+                    </Box>
+                </Grid>
+            </Grid>
+        </Box>
     );
 }
 

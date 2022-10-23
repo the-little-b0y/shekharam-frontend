@@ -2,6 +2,8 @@ import { FunctionComponent} from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { routeList } from './constants/routes';
 import { Pagenotfound } from './containers/pagenotfoundContainer';
+import './App.css';
+import 'react-phone-input-2/lib/material.css'
 
 const AuthWrapper: FunctionComponent<{isAuthenticated : boolean}> = ({isAuthenticated}) => {
   return isAuthenticated ? (
