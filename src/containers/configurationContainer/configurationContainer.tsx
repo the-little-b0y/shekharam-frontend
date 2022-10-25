@@ -6,12 +6,12 @@ interface Props {
 }
 
 
-const Dashboard: FunctionComponent<Props> = ()  => {
+const Configuration: FunctionComponent<Props> = ()  => {
     return (
         <FixedDrawer>
-            Dashboard
+            Configuration
         </FixedDrawer>
     );
 }
 
-export default Dashboard;
+export default Configuration;

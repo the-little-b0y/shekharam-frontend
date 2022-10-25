@@ -7,6 +7,13 @@ import PhoneInput from 'react-phone-input-2'
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import { themeProperties } from '../../constants/themeProperties';
+import { useSnackbar } from 'notistack';
+import { parsePhoneNumber, isValidPhoneNumber } from 'libphonenumber-js';
+import { authenticate } from '../../services/authServices';
+import { AuthUserInterface } from '../../contracts/authInterface';
+import { useDispatch } from 'react-redux'
+import { setUser, setAccesstoken, setRefreshtoken } from '../../redux/authSlice';
+import { getUser } from '../../services/userServices';
 
 const style = {
     loginButton: {
@@ -15,7 +22,7 @@ const style = {
         backgroundColor: themeProperties.colors.button,
         '&:hover': {
             backgroundColor: darken(themeProperties.colors.button, 0.1),
-        },
+        }
     }
 }
 
@@ -25,14 +32,45 @@ interface Props {
 
 const Login: FunctionComponent<Props> = ()  => {
     const navigate = useNavigate();
+    const { enqueueSnackbar } = useSnackbar();
+    const dispatch = useDispatch()
 
-    const [phoneNumber, setPhoneNumber] = useState<string>('')
+    const [mobileNumber, setMobileNumber] = useState<string>('')
     const [showPassword, setShowPassword] = useState<boolean>(false)
     const [password, setPassword] = useState<string>('')
 
     const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
     };
+
+    const login = async() => {
+        if(mobileNumber.length === 0) {
+            enqueueSnackbar('Please enter a Mobile Number', { variant: "warning", preventDuplicate: true })
+        } else {
+            const parsedMobileNumber = parsePhoneNumber(`+${mobileNumber}`)
+            if(!isValidPhoneNumber(parsedMobileNumber.nationalNumber, parsedMobileNumber.country)) {
+                enqueueSnackbar('Please enter a valid Mobile Number', { variant: "warning", preventDuplicate: true })
+            } else if(password.length === 0) {
+                enqueueSnackbar('Please enter a Password', { variant: "warning", preventDuplicate: true })
+            } else {
+                const user: AuthUserInterface = {
+                    mobileNumber,
+                    password
+                }
+                const response = await authenticate(user)
+                enqueueSnackbar(response.message, { variant: "success", preventDuplicate: true })
+                dispatch(setAccesstoken(response.data.accessToken))
+                dispatch(setRefreshtoken(response.data.refreshToken))
+                const response1 = await getUser()
+                dispatch(setUser(response1.data))
+                if(response1.data.firstName) {
+                    navigate('/dashboard')
+                } else {
+                    navigate('/setup')
+                }
+            }
+        }
+    }
 
     return (
         <Box 
@@ -58,15 +96,15 @@ const Login: FunctionComponent<Props> = ()  => {
                         borderRadius={'15px'}
                         p={'30px'}
                     >
-                        <Logo />
+                        <Logo size='md' />
                         <PhoneInput
                             containerStyle={{marginTop: '40px', color: themeProperties.colors.textPrimary, fontSize: themeProperties.fontSize.xs}}
                             inputStyle={{color: themeProperties.colors.textPrimary, fontSize: themeProperties.fontSize.xs, width: '100%'}}
                             specialLabel={'Mobile Number'}
                             country={'in'}
                             placeholder={''}
-                            value={phoneNumber}
-                            onChange={value => setPhoneNumber(value)}
+                            value={mobileNumber}
+                            onChange={value => setMobileNumber(value)}
                         />
                         <FormControl sx={{width: '100%', marginTop: '13px', color: themeProperties.colors.textPrimary, background: themeProperties.colors.white}} variant="outlined">
                             <InputLabel htmlFor="outlined-adornment-password" sx={{fontSize: themeProperties.fontSize.xs}}>Password</InputLabel>
@@ -90,7 +128,7 @@ const Login: FunctionComponent<Props> = ()  => {
                                 }
                             />
                         </FormControl>
-                        <Button variant="contained" disableElevation sx={style.loginButton}>
+                        <Button variant="contained" disableElevation sx={style.loginButton} onClick={login}>
                             Login
                         </Button>
                         <Typography sx={{marginTop: '13px', fontSize: themeProperties.fontSize.xs}}>

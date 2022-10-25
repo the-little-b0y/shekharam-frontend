@@ -1,7 +1,7 @@
 export const themeProperties = {
     fontSize: {
-        xxxs: '5px',
-        xxs: '10px',
+        xxxs: '10px',
+        xxs: '11px',
         xs: '13px',
         sm: '15px',
         md: '20px',

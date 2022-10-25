@@ -10,7 +10,11 @@ import { themeProperties } from '../../constants/themeProperties';
 import { useSnackbar } from 'notistack';
 import { parsePhoneNumber, isValidPhoneNumber } from 'libphonenumber-js';
 import { PostUserInterface } from '../../contracts/userInterface';
-import { postUser } from '../../services/authServices';
+import { getUser, postUser } from '../../services/userServices';
+import { specialCharactersRegex } from '../../constants/regex';
+import { authenticate } from '../../services/authServices';
+import { setUser, setAccesstoken, setRefreshtoken } from '../../redux/authSlice';
+import { useDispatch } from 'react-redux';
 
 const style = {
     registerButton: {
@@ -19,7 +23,7 @@ const style = {
         backgroundColor: themeProperties.colors.button,
         '&:hover': {
             backgroundColor: darken(themeProperties.colors.button, 0.1),
-        },
+        }
     }
 }
 
@@ -30,7 +34,7 @@ interface Props {
 const Register: FunctionComponent<Props> = ()  => {
     const navigate = useNavigate();
     const { enqueueSnackbar } = useSnackbar();
-    const specialChars = /[\\/*+;&%?#@!^()_="\-:~`'|[\]{}]/;
+    const dispatch = useDispatch()
 
     const [mobileNumber, setMobileNumber] = useState<string>('')
     const [showPassword, setShowPassword] = useState<boolean>(false)
@@ -57,7 +61,7 @@ const Register: FunctionComponent<Props> = ()  => {
                 enqueueSnackbar('Password should contain atleast one Lower case', { variant: "warning", preventDuplicate: true })
             } else if(password.length > 0 && !/\d/.test(password)) {
                 enqueueSnackbar('Password should contain atleast one Lower case', { variant: "warning", preventDuplicate: true })
-            } else if(password.length > 0 && !specialChars.test(password)) {
+            } else if(password.length > 0 && !specialCharactersRegex.test(password)) {
                 enqueueSnackbar('Password should contain atleast one Lower case', { variant: "warning", preventDuplicate: true })
             } else {
                 const user: PostUserInterface = {
@@ -66,6 +70,18 @@ const Register: FunctionComponent<Props> = ()  => {
                 }
                 const response = await postUser(user)
                 enqueueSnackbar(response.message, { variant: "success", preventDuplicate: true })
+                
+                const response1 = await authenticate(user)
+                dispatch(setAccesstoken(response1.data.accessToken))
+                dispatch(setRefreshtoken(response1.data.refreshToken))
+                const response2 = await getUser()
+                dispatch(setUser(response1.data))
+                enqueueSnackbar(response.message, { variant: "success", preventDuplicate: true })
+                if(response2.data.firstName) {
+                    navigate('/dashboard')
+                } else {
+                    navigate('/setup')
+                }
             }
         }
     }
@@ -99,7 +115,7 @@ const Register: FunctionComponent<Props> = ()  => {
                         <FormControlLabel sx={{cursor: 'context-menu', height: '35px'}} control={<Radio sx={{cursor: 'context-menu'}} checked={password.length > 0 && password.toUpperCase() !== password} />} label={<Typography sx={{fontSize: themeProperties.fontSize.xs, color: themeProperties.colors.textPrimary}}>Atleast a Lower case</Typography>} />
                         <FormControlLabel sx={{cursor: 'context-menu', height: '35px'}} control={<Radio sx={{cursor: 'context-menu'}} checked={password.length > 0 && password.toLowerCase() !== password} />} label={<Typography sx={{fontSize: themeProperties.fontSize.xs, color: themeProperties.colors.textPrimary}}>Atleast a Upper case</Typography>} />
                         <FormControlLabel sx={{cursor: 'context-menu', height: '35px'}} control={<Radio sx={{cursor: 'context-menu'}} checked={password.length > 0 && /\d/.test(password)} />} label={<Typography sx={{fontSize: themeProperties.fontSize.xs, color: themeProperties.colors.textPrimary}}>Atleast a Number</Typography>} />
-                        <FormControlLabel sx={{cursor: 'context-menu', height: '35px'}} control={<Radio sx={{cursor: 'context-menu'}} checked={password.length > 0 && specialChars.test(password)} />} label={<Typography sx={{fontSize: themeProperties.fontSize.xs, color: themeProperties.colors.textPrimary}}>Atleast a Symbol</Typography>} />
+                        <FormControlLabel sx={{cursor: 'context-menu', height: '35px'}} control={<Radio sx={{cursor: 'context-menu'}} checked={password.length > 0 && specialCharactersRegex.test(password)} />} label={<Typography sx={{fontSize: themeProperties.fontSize.xs, color: themeProperties.colors.textPrimary}}>Atleast a Symbol</Typography>} />
                     </Box>
                 </Grid>
                 <Grid item xs={12} md={4}>
@@ -112,7 +128,7 @@ const Register: FunctionComponent<Props> = ()  => {
                         borderRadius={'15px'}
                         p={'30px'}
                     >
-                        <Logo />
+                        <Logo size='md' />
                         <PhoneInput
                             containerStyle={{marginTop: '40px', color: themeProperties.colors.textPrimary, fontSize: themeProperties.fontSize.xs}}
                             inputStyle={{color: themeProperties.colors.textPrimary, fontSize: themeProperties.fontSize.xs, width: '100%'}}
