@@ -1,5 +1,5 @@
-import { FunctionComponent, useEffect } from 'react';
-import { Box, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Typography, Button } from '@mui/material';
+import { FunctionComponent, useEffect, useState } from 'react';
+import { Box, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Typography, Button, useMediaQuery, AppBar, Toolbar, IconButton } from '@mui/material';
 import { routeList } from '../../constants/routes';
 import { sortBy } from 'lodash';
 import { useLocation, useNavigate } from "react-router-dom";
@@ -11,6 +11,9 @@ import { useSnackbar } from 'notistack';
 import Logo from './logo';
 import { ReduxInterface } from '../../contracts/authInterface';
 import { GetUserInterface } from '../../contracts/userInterface';
+import { useTheme } from '@mui/material/styles';
+import MenuIcon from '@mui/icons-material/Menu';
+import CssBaseline from '@mui/material/CssBaseline';
 
 interface Props {
     children: React.ReactNode;
@@ -63,7 +66,11 @@ const FixedDrawer: FunctionComponent<Props> = ({children})  => {
     const dispatch = useDispatch();
     const counter = useSelector((state) => state) as ReduxInterface
     const { enqueueSnackbar } = useSnackbar();
+    const theme = useTheme();
+    const matches = useMediaQuery(theme.breakpoints.up('sm'));
     const path = location.pathname;
+
+    const [open, setOpen] = useState(matches ? true : false);
 
     useEffect(() => {
         const accesstoken = localStorage.getItem('accesstoken');
@@ -90,8 +97,73 @@ const FixedDrawer: FunctionComponent<Props> = ({children})  => {
         navigate('/login')
     }
 
+    const drawer = (
+        <div>
+            <Box
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
+                py={'15px'}
+                bgcolor={themeProperties.colors.primary}
+                mb={'5px'}
+            >
+                <Logo size='sm' />
+            </Box>
+            <List>
+                {sortBy(routeList.filter(route => route.routetype === 'drawer'), ['position']).map(route => 
+                    <ListItem key={route.path} disablePadding 
+                        onClick={() => {
+                            if(path !== route.path) {
+                                navigate(route.path)
+                            }
+                        }}
+                    >
+                        <ListItemButton sx={(path === route.path) ? style.drawerButtonActive : style.drawerButtonInactiveActive}>
+                            <ListItemIcon>
+                                <route.icon style={(path === route.path) ? {color: themeProperties.colors.primary, minWidth: '40px'} : {color: themeProperties.colors.textPrimary, minWidth: '40px'}} />
+                            </ListItemIcon>
+                            <ListItemText 
+                                disableTypography
+                                primary={<Typography sx={(path === route.path) ? {fontSize: themeProperties.fontSize.xs, color: themeProperties.colors.textPrimary, fontWeight: themeProperties.fontWeight.bolder} : {fontSize: themeProperties.fontSize.xs, color: themeProperties.colors.textPrimary}}>{route.name}</Typography>}                                    
+                            />
+                        </ListItemButton>
+                    </ListItem>
+                )}
+            </List>
+            <Box sx={style.footer}>
+                <Button variant="contained" disableElevation sx={style.logoutButton} onClick={logout}>
+                    Logout
+                </Button>
+            </Box>
+        </div>
+    )
+
     return (
         <Box sx={{ display: 'flex' }}>
+            <CssBaseline />
+            <Drawer
+                variant="temporary"
+                ModalProps={{
+                    keepMounted: true,
+                }}
+                sx={{
+                    display: { xs: 'block', sm: 'none' },
+                    '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
+                }}
+                open={open}
+                PaperProps={{
+                    sx: {
+                        backgroundColor: themeProperties.colors.secondary
+                    }
+                }}
+                onClose={() => {
+                    if(!matches) {
+                        setOpen(false);
+                    }
+                }}
+            >
+                {drawer}
+            </Drawer>
             <Drawer
                 PaperProps={{
                     sx: {
@@ -99,6 +171,7 @@ const FixedDrawer: FunctionComponent<Props> = ({children})  => {
                     }
                 }}
                 sx={{
+                    display: { xs: 'none', sm: 'block' },
                     width: drawerWidth,
                     flexShrink: 0,
                     '& .MuiDrawer-paper': {
@@ -108,49 +181,41 @@ const FixedDrawer: FunctionComponent<Props> = ({children})  => {
                 }}
                 variant="permanent"
                 anchor="left"
+                open
             >
-                <Box
-                    display="flex"
-                    justifyContent="center"
-                    alignItems="center"
-                    py={'15px'}
-                    bgcolor={themeProperties.colors.primary}
-                    mb={'5px'}
-                >
-                    <Logo size='sm' />
-                </Box>
-                <List>
-                    {sortBy(routeList.filter(route => route.routetype === 'drawer'), ['position']).map(route => 
-                        <ListItem key={route.path} disablePadding 
-                            onClick={() => {
-                                if(path !== route.path) {
-                                    navigate(route.path)
-                                }
-                            }}
-                        >
-                            <ListItemButton sx={(path === route.path) ? style.drawerButtonActive : style.drawerButtonInactiveActive}>
-                                <ListItemIcon>
-                                    <route.icon style={(path === route.path) ? {color: themeProperties.colors.primary, minWidth: '40px'} : {color: themeProperties.colors.textPrimary, minWidth: '40px'}} />
-                                </ListItemIcon>
-                                <ListItemText 
-                                    disableTypography
-                                    primary={<Typography sx={(path === route.path) ? {fontSize: themeProperties.fontSize.xs, color: themeProperties.colors.textPrimary, fontWeight: themeProperties.fontWeight.bolder} : {fontSize: themeProperties.fontSize.xs, color: themeProperties.colors.textPrimary}}>{route.name}</Typography>}                                    
-                                />
-                            </ListItemButton>
-                        </ListItem>
-                    )}
-                </List>
-                <Box sx={style.footer}>
-                    <Button variant="contained" disableElevation sx={style.logoutButton} onClick={logout}>
-                        Logout
-                    </Button>
-                </Box>
+                {drawer}
             </Drawer>
-            <Box
-                component="main"
-                sx={{ flexGrow: 1, p: 3 }}
-            >
-                {children}
+            <Box sx={{width: '100%'}}>
+                {!matches &&
+                    <AppBar position="static" sx={{background: themeProperties.colors.primary}}>
+                        <Toolbar>
+                            <Box
+                                display="flex"
+                                justifyContent="center"
+                                alignItems="center"
+                                width={'100%'}
+                            >
+                                <Logo size='sm' />
+                            </Box>
+                            <IconButton
+                                size="large"
+                                edge="start"
+                                color="inherit"
+                                aria-label="menu"
+                                sx={{position: "fixed", top: 4, left: 15}}
+                                onClick={() => setOpen(true)}
+                            >
+                                <MenuIcon />
+                            </IconButton>
+                        </Toolbar>
+                    </AppBar>
+                }
+                <Box
+                    component="main"
+                    sx={{ flexGrow: 1, p: 3 }}
+                >
+                    {children}
+                </Box>
             </Box>
         </Box>
     );

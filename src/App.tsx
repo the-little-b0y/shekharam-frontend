@@ -2,8 +2,16 @@ import { FunctionComponent} from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { routeList } from './constants/routes';
 import { Pagenotfound } from './containers/pagenotfoundContainer';
-import './App.css';
+import { ThemeProvider, createTheme } from "@mui/material/styles";
 import 'react-phone-input-2/lib/material.css'
+
+const theme = createTheme({
+  palette: {
+    background: {
+      default: "#DCE8EF"
+    }
+  }
+});
 
 const AuthWrapper: FunctionComponent<{isAuthenticated : boolean}> = ({isAuthenticated}) => {
   return isAuthenticated ? (
@@ -17,17 +25,19 @@ const App = () => {
   const isAuthenticated = false;
 
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<AuthWrapper isAuthenticated={isAuthenticated} />}/>
-        {routeList.map(route => {
-          return (
-            <Route key={route.path} path={route.path} element={<route.component />} />
-          )
-        })}
-        <Route path="*" element={<Pagenotfound />} />
-      </Routes>
-    </BrowserRouter>
+    <ThemeProvider theme={theme}>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<AuthWrapper isAuthenticated={isAuthenticated} />}/>
+          {routeList.map(route => {
+            return (
+              <Route key={route.path} path={route.path} element={<route.component />} />
+            )
+          })}
+          <Route path="*" element={<Pagenotfound />} />
+        </Routes>
+      </BrowserRouter>
+    </ThemeProvider>
   );
 }
 
