@@ -4,6 +4,7 @@ export const themeProperties = {
         xxs: '11px',
         xs: '13px',
         sm: '15px',
+        smp: '17px',
         md: '20px',
         mdp: '25px',
         mddp: '30px',
@@ -22,9 +23,12 @@ export const themeProperties = {
     colors: {
         primary: '#4F7D96',
         secondary: '#F1F7FC',
+        tertiary: '#6E95AA',
+        quaternary: '#C5DFEB',
         textPrimary: '#3D3D3D',
         button: '#FE834B',
         error: 'crimson',
-        white: '#FFFFFF'
+        white: '#FFFFFF',
+        gray: '#888888'
     }
 }

@@ -58,11 +58,11 @@ const Register: FunctionComponent<Props> = ()  => {
             } else if(password.length > 0 && password.toUpperCase() === password) {
                 enqueueSnackbar('Password should contain atleast one Lower case', { variant: "warning", preventDuplicate: true })
             } else if(password.length > 0 && password.toLowerCase() === password) {
-                enqueueSnackbar('Password should contain atleast one Lower case', { variant: "warning", preventDuplicate: true })
+                enqueueSnackbar('Password should contain atleast one Upper case', { variant: "warning", preventDuplicate: true })
             } else if(password.length > 0 && !/\d/.test(password)) {
-                enqueueSnackbar('Password should contain atleast one Lower case', { variant: "warning", preventDuplicate: true })
+                enqueueSnackbar('Password should contain atleast one Number', { variant: "warning", preventDuplicate: true })
             } else if(password.length > 0 && !specialCharactersRegex.test(password)) {
-                enqueueSnackbar('Password should contain atleast one Lower case', { variant: "warning", preventDuplicate: true })
+                enqueueSnackbar('Password should contain atleast one Special Character', { variant: "warning", preventDuplicate: true })
             } else {
                 const user: PostUserInterface = {
                     mobileNumber,

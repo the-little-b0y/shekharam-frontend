@@ -4,12 +4,16 @@ import { routeList } from './constants/routes';
 import { Pagenotfound } from './containers/pagenotfoundContainer';
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import 'react-phone-input-2/lib/material.css'
+import './App.css'
 
 const theme = createTheme({
   palette: {
     background: {
       default: "#DCE8EF"
-    }
+    },
+  },
+  typography: {
+    fontFamily: 'Signika'
   }
 });
 

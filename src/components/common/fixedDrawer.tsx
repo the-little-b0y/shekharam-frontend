@@ -45,7 +45,7 @@ const style = {
         }
     },
     footer: {
-        width: `calc(${drawerWidth}px - 30px)`, 
+        width: `calc(${drawerWidth}px - 5px)`, 
         position: "fixed",
         bottom: 0,
         textAlign: "center",
@@ -64,20 +64,20 @@ const FixedDrawer: FunctionComponent<Props> = ({children})  => {
     const location = useLocation();
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const counter = useSelector((state) => state) as ReduxInterface
-    const { enqueueSnackbar } = useSnackbar();
     const theme = useTheme();
+    const reduxState = useSelector((state) => state) as ReduxInterface
     const matches = useMediaQuery(theme.breakpoints.up('sm'));
+    const { enqueueSnackbar } = useSnackbar();
     const path = location.pathname;
 
-    const [open, setOpen] = useState(matches ? true : false);
+    const [open, setOpen] = useState(false);
 
     useEffect(() => {
         const accesstoken = localStorage.getItem('accesstoken');
         if(!accesstoken) {
             enqueueSnackbar('Please Login', { variant: "info", preventDuplicate: true })
             navigate('/login')
-        } else if(!counter.accesstoken) {
+        } else if(!reduxState.accesstoken) {
             const refreshtoken = localStorage.getItem('refreshtoken');
             const user = localStorage.getItem('user')
             if(accesstoken && refreshtoken && user) {
@@ -212,7 +212,7 @@ const FixedDrawer: FunctionComponent<Props> = ({children})  => {
                 }
                 <Box
                     component="main"
-                    sx={{ flexGrow: 1, p: 3 }}
+                    sx={{ flexGrow: 1, px: 5, py: 4 }}
                 >
                     {children}
                 </Box>

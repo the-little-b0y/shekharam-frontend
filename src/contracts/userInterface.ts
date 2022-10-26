@@ -10,7 +10,9 @@ export interface GetUserInterface {
     mobileNumber: string,
     firstName: string,
     lastName: string,
-    dateOfBirth: Date | null
+    dateOfBirth: Date | null,
+    greeting?: string,
+    avatar?: string
 }
 
 export interface GetUserReturnInterface extends ApiResponse {
@@ -21,4 +23,9 @@ export interface PutUserInterface {
     firstName: string,
     lastName: string,
     dateOfBirth: Date | null
+}
+
+export interface AvatarInterface {
+    name: string,
+    value: string
 }

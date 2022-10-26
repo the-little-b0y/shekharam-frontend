@@ -10,7 +10,9 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { personNameRegex } from '../../constants/regex';
 import { PutUserInterface } from '../../contracts/userInterface';
-import { putUser } from '../../services/userServices';
+import { getUser, putUser } from '../../services/userServices';
+import { setUser } from '../../redux/authSlice';
+import { useDispatch } from 'react-redux';
 
 const style = {
     confirmButton: {
@@ -34,6 +36,7 @@ interface Props {
 const Setup: FunctionComponent<Props> = ()  => {
     const navigate = useNavigate();
     const { enqueueSnackbar } = useSnackbar();
+    const dispatch = useDispatch()
 
     const [firstName, setFirstName] = useState<string>('')
     const [lastName, setLastName] = useState<string>('')
@@ -59,6 +62,8 @@ const Setup: FunctionComponent<Props> = ()  => {
                 dateOfBirth: new Date(dateOfBirth)
             }
             const response = await putUser(user)
+            const response1 = await getUser()
+            dispatch(setUser(response1.data))
             enqueueSnackbar(response.message, { variant: "success", preventDuplicate: true })
             navigate('/dashboard')
         }
