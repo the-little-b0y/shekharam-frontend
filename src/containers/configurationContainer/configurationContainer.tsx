@@ -1,20 +1,212 @@
-import { FunctionComponent} from 'react';
-import { Grid } from '@mui/material';
+import { FunctionComponent, useState, useEffect } from 'react';
+import { Grid, Typography, Box, Tooltip, IconButton } from '@mui/material';
 import FixedDrawer from '../../components/common/fixedDrawer';
 import SuggestionBox from '../../components/common/suggestionBox';
+import { themeProperties } from '../../constants/themeProperties';
+import HelpIcon from '@mui/icons-material/Help';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
+import { darken } from '@mui/material/styles';
+import CreateItemType from '../../components/modals/createItemtype';
+import { useSnackbar } from 'notistack';
+import { deleteCollectionItemType, getConfiguration, postCollectionItemType, putCollectionItemType } from '../../services/configurationService';
+import { CollectionItemTypeInterface } from '../../contracts/configurationInterface';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import DeleteConfirmation from '../../components/modals/deleteConfimation';
+
+const style = {
+    addButton: {
+        backgroundColor: themeProperties.colors.secondary,
+        cursor: 'pointer',
+        '&:hover': {
+            backgroundColor: darken(themeProperties.colors.secondary, 0.1)
+        }
+    },
+    editDeleteButton: {
+        backgroundColor: themeProperties.colors.quaternary,
+        '&:hover': {
+            backgroundColor: darken(themeProperties.colors.quaternary, 0.1)
+        }
+    }
+}
 
 interface Props {
   
 }
 
 const Configuration: FunctionComponent<Props> = ()  => {
+    const { enqueueSnackbar } = useSnackbar();
+
+    const [open, setOpen] = useState<boolean>(false)
+    const [openConfimation, setOpenConfirmation] = useState<boolean>(false)
+    const [itemTypes, setItemTypes] = useState<CollectionItemTypeInterface[]>([])
+    const [deletionId, setDeletionId] = useState<string>('')
+    const [editItemtype, setEditItemType] = useState<CollectionItemTypeInterface>()
+
+    useEffect(() => {
+        fetchPageApis()
+    }, []);
+
+    const fetchPageApis = async() => {
+        const response = await getConfiguration()
+        setItemTypes(response.data ? response.data.collectionItemTypes : [])
+    }
+
+    const addCollectionItemType = async(itemtype: string, itemimage: string) => {
+        const collectionItemType: CollectionItemTypeInterface = { itemtype, itemimage }
+        const response = await postCollectionItemType(collectionItemType)
+        enqueueSnackbar(response.message, { variant: "success", preventDuplicate: true })
+        fetchPageApis()
+        setOpen(false)
+    }
+
+    const editCollectionItemType = async(item: CollectionItemTypeInterface) => {
+        setEditItemType(item)
+        setOpen(true)
+    }
+
+    const confirmeditCollectionItemType = async(itemtype: string, itemimage: string) => {
+        if(editItemtype) {
+            const collectionItemType: CollectionItemTypeInterface = { 
+                itemtype, itemimage,
+                _id: editItemtype._id
+            }
+            const response = await putCollectionItemType(collectionItemType)
+            enqueueSnackbar(response.message, { variant: "success", preventDuplicate: true })
+            fetchPageApis()
+            setOpen(false)
+            setEditItemType(undefined)
+        }
+    }
+
+    const removeCollectionItemType = (id: string) => {
+        setDeletionId(id)
+        setOpenConfirmation(true)
+    }
+
+    const confirmRemoveCollectionItemType = async() => {
+        if(deletionId) {
+            const response = await deleteCollectionItemType(deletionId)
+            enqueueSnackbar(response.message, { variant: "success", preventDuplicate: true })
+            fetchPageApis()
+            setOpenConfirmation(false)
+            setDeletionId('')
+        }
+    }
+
     return (
         <FixedDrawer>
             <Grid container>
                 <Grid item xs={12}>
                     <SuggestionBox greetingType='default' subtext='Configuration page for your collection' />
                 </Grid>
+                <Grid item xs={12} style={{paddingLeft: '20px', paddingRight: '20px', marginTop: '25px'}}>
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            flexDirection: 'row'
+                        }}
+                    >
+                        <Typography style={{color: themeProperties.colors.tertiary, fontSize: themeProperties.fontSize.md, fontWeight: themeProperties.fontWeight.bolder}}>Collection Item Type</Typography>
+                        <Tooltip title="What items are you collecting. Eg: Coins, Stamps">
+                            <HelpIcon style={{cursor: 'pointer', color: themeProperties.colors.gray, marginLeft: '10px', fontSize: themeProperties.fontSize.smp, marginTop: '6px'}} />
+                        </Tooltip>
+                    </Box>
+                </Grid>
+                <Grid item xs={12} style={{paddingLeft: '20px', paddingRight: '20px', marginTop: '20px'}}>
+                    <Grid container spacing={3}>
+                        {itemTypes.map((item, index) => {
+                            return (
+                                <Grid key={`item-${String(index)}`} item xs={6} md={2}>
+                                    <Box
+                                        borderRadius={'10px'}
+                                        bgcolor={themeProperties.colors.secondary}
+                                        height={'184.5px'}
+                                    >
+                                        <Box
+                                            display="flex"
+                                            justifyContent={'center'}
+                                            alignItems={'center'}
+                                            flexDirection={'column'}
+                                            sx={{
+                                                pt: '15px'
+                                            }}
+                                           
+                                        >
+                                            <img style={{height: '100px'}} src={item.itemimage} alt={item.itemtype} />
+                                            <Typography style={{marginTop: '10px', color: themeProperties.colors.tertiary, fontSize: themeProperties.fontSize.xs}}>{item.itemtype}</Typography>
+                                        </Box>
+                                        <Box
+                                            sx={{
+                                                display: 'flex',
+                                                justifyContent: 'space-between',
+                                                px: '15px',
+                                                pb: '15px'
+                                            }}
+                                        >
+                                            <Tooltip title="Delete">
+                                                <IconButton
+                                                    size='small'
+                                                    onClick={() => removeCollectionItemType(item._id as string)}
+                                                    sx={style.editDeleteButton}
+                                                >
+                                                    <DeleteIcon style={{color: themeProperties.colors.error, fontSize: themeProperties.fontSize.sm}} />
+                                                </IconButton>
+                                            </Tooltip>
+                                            <Tooltip title="Edit">
+                                                <IconButton
+                                                    size='small'
+                                                    onClick={() => editCollectionItemType(item)}
+                                                    sx={style.editDeleteButton}
+                                                >
+                                                    <EditIcon style={{color: themeProperties.colors.tertiary, fontSize: themeProperties.fontSize.sm}} />
+                                                </IconButton>
+                                            </Tooltip>
+                                        </Box>
+                                    </Box>
+                                </Grid>
+                            )
+                        })}
+                        <Grid item xs={6} md={2}>
+                            <Box
+                                display="flex"
+                                justifyContent={'center'}
+                                alignItems={'center'}
+                                borderRadius={'10px'}
+                                p={'20px'}
+                                height={'184.5px'}
+                                flexDirection={'column'}
+                                sx={style.addButton}
+                                onClick={() => setOpen(true)}
+                            >
+                                <AddCircleIcon style={{color: themeProperties.colors.primary, fontSize: themeProperties.fontSize.mdp}} />
+                                <Typography style={{marginTop: '5px', color: themeProperties.colors.tertiary, fontSize: themeProperties.fontSize.xs}}>Add Item Type</Typography>
+                            </Box>
+                        </Grid>
+                    </Grid>
+                </Grid>
             </Grid>
+            <CreateItemType 
+                open={open}
+                handleClose={() => {
+                    setOpen(false)
+                    setEditItemType(undefined)
+                }}
+                modalHead={editItemtype ? 'Edit Item type' : 'Add Item type'}
+                addCollectionItemType={addCollectionItemType}
+                editItemtype={editItemtype}
+                confirmeditCollectionItemType={confirmeditCollectionItemType}
+            />
+            <DeleteConfirmation 
+                open={openConfimation}
+                handleClose={() => {
+                    setOpenConfirmation(false)
+                    setDeletionId('')
+                }}
+                modalHead='Delete Confimation'
+                confirm={confirmRemoveCollectionItemType}
+                deletionItem={'Collection Item Type'}
+            />
         </FixedDrawer>
     );
 }

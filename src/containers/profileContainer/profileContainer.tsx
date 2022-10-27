@@ -45,7 +45,7 @@ const style = {
         '&:hover': {
             backgroundColor: darken(themeProperties.colors.button, 0.1),
         }
-    },
+    }
 }
 
 interface Props {
@@ -91,7 +91,7 @@ const Profile: FunctionComponent<Props> = ()  => {
 
     const saveAvatarGreeting = async () => {
         const selectedAv = avatar ? avatar : avatarIcons[0].name
-        const selectedGr = greeting ? greeting : greeting[0]
+        const selectedGr = greeting ? greeting : greetings[0]
         const response = await putAvatarGreeting(selectedAv, selectedGr)
         const response1 = await getUser()
         dispatch(setUser(response1.data))

@@ -27,7 +27,7 @@ export const themeProperties = {
         quaternary: '#C5DFEB',
         textPrimary: '#3D3D3D',
         button: '#FE834B',
-        error: 'crimson',
+        error: '#DC143C',
         white: '#FFFFFF',
         gray: '#888888'
     }

@@ -37,7 +37,7 @@ const SuggestionBox: FunctionComponent<Props> = ({greetingType, subtext})  => {
                         justifyContent={'center'}
                         flexDirection={'column'}
                     >
-                        <img src={getMyAvatarIcon(reduxUser)} style={{height: '90px'}} />
+                        <img src={getMyAvatarIcon(reduxUser)} alt="avatar" style={{height: '90px'}} />
                     </Box>
                     <Box p={1} 
                         display="flex"

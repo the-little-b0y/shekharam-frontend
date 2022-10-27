@@ -33,6 +33,7 @@ const RootModal: FunctionComponent<Props> = ({children, open, handleClose, modal
         <Modal
             open={open}
             onClose={handleClose}
+            disableAutoFocus={true}
         >
             <Box sx={style.modal}>
                 <Grid container spacing={3}>
