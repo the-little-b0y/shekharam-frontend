@@ -20,6 +20,14 @@ interface AuthUserDataInterface {
     refreshToken: string,
 }
 
+interface AccessTokenDataInterface {
+    accessToken: string
+}
+
 export interface AuthUserReturnInterface extends ApiResponse {
     data: AuthUserDataInterface
+}
+
+export interface AccessTokenReturnInterface extends ApiResponse {
+    data: AccessTokenDataInterface
 }
