@@ -6,8 +6,14 @@ export interface CollectionItemTypeInterface {
     _id?: string
 }
 
+export interface ConditionTypeInterface {
+    conditiontype: string,
+    _id?: string
+}
+
 export interface GetConfigurationInterface {
-    collectionItemTypes: CollectionItemTypeInterface[]
+    collectionItemTypes: CollectionItemTypeInterface[],
+    conditionTypes: ConditionTypeInterface[]
 }
 
 export interface GetConfigurationReturnInterface extends ApiResponse {

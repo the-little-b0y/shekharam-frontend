@@ -13,6 +13,7 @@ import { PutUserInterface } from '../../contracts/userInterface';
 import { getUser, putUser } from '../../services/userServices';
 import { setUser } from '../../redux/authSlice';
 import { useDispatch } from 'react-redux';
+import Loading from '../../components/common/loading';
 
 const style = {
     confirmButton: {
@@ -38,6 +39,7 @@ const Setup: FunctionComponent<Props> = ()  => {
     const { enqueueSnackbar } = useSnackbar();
     const dispatch = useDispatch()
 
+    const [loading, setLoading] = useState<boolean>(false)
     const [firstName, setFirstName] = useState<string>('')
     const [lastName, setLastName] = useState<string>('')
     const [dateOfBirth, setDateOfBirth] = useState<Date | null>(null)
@@ -56,6 +58,7 @@ const Setup: FunctionComponent<Props> = ()  => {
         } else if(dateOfBirth > new Date()) {
             enqueueSnackbar('Entered Date of Birth is Invalid', { variant: "warning", preventDuplicate: true })
         } else {
+            setLoading(true)
             const user: PutUserInterface = {
                 firstName: firstName.trim(),
                 lastName: lastName.trim(),
@@ -66,71 +69,78 @@ const Setup: FunctionComponent<Props> = ()  => {
             dispatch(setUser(response1.data))
             enqueueSnackbar(response.message, { variant: "success", preventDuplicate: true })
             navigate('/dashboard')
+            setLoading(false)
         }
     }
 
-    return (
-        <Box 
-            display="flex"
-            justifyContent="center"
-            alignItems="center"
-            minHeight="97vh"
-        >
-            <Grid 
-                spacing={3}
-                container
-                direction="row"
+    if(loading) {
+        return (
+            <Loading />
+        )
+    } else {
+        return (
+            <Box 
+                display="flex"
                 justifyContent="center"
                 alignItems="center"
+                minHeight="97vh"
             >
-                <Grid item xs={12} md={4}>
-                    <Box 
-                        display="flex"
-                        justifyContent="center"
-                        alignItems="center"
-                        flexDirection={'column'}
-                        bgcolor={themeProperties.colors.secondary}
-                        borderRadius={'15px'}
-                        p={'30px'}
-                    >
-                        <AccountCircleIcon sx={{color: themeProperties.colors.button, fontSize: themeProperties.fontSize.xxl}} />
-                        <Typography sx={{color: themeProperties.colors.primary, fontSize: themeProperties.fontSize.mdp, fontWeight: themeProperties.fontWeight.bolder}}>User Settings</Typography>
-                        <TextField label="First Name" variant="outlined" value={firstName}
-                            sx={{marginTop: '40px', width: '100%', color: themeProperties.colors.textPrimary}}
-                            inputProps={{style: style.textField}}
-                            InputLabelProps={{style: style.textField}}
-                            onChange={(event) => setFirstName(event.target.value)}
-                        />
-                        <TextField label="Last Name" variant="outlined" value={lastName}
-                            sx={{marginTop: '13px', width: '100%', color: themeProperties.colors.textPrimary}}
-                            inputProps={{style: style.textField}}
-                            InputLabelProps={{style: style.textField}}
-                            onChange={(event) => setLastName(event.target.value)}
-                        />
-                        <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            <DesktopDatePicker
-                                label="Date Of Birth"
-                                inputFormat="DD/MM/YYYY"
-                                value={dateOfBirth}
-                                onChange={(value) => setDateOfBirth(value)}
-                                renderInput={(params) => 
-                                    <TextField 
-                                        sx={{marginTop: '13px', width: '100%', color: themeProperties.colors.textPrimary}}
-                                        inputProps={{style: style.textField}}
-                                        InputLabelProps={{style: style.textField}}
-                                        {...params}  
-                                    />
-                                }
+                <Grid 
+                    spacing={3}
+                    container
+                    direction="row"
+                    justifyContent="center"
+                    alignItems="center"
+                >
+                    <Grid item xs={12} md={4}>
+                        <Box 
+                            display="flex"
+                            justifyContent="center"
+                            alignItems="center"
+                            flexDirection={'column'}
+                            bgcolor={themeProperties.colors.secondary}
+                            borderRadius={'15px'}
+                            p={'30px'}
+                        >
+                            <AccountCircleIcon sx={{color: themeProperties.colors.button, fontSize: themeProperties.fontSize.xxl}} />
+                            <Typography sx={{color: themeProperties.colors.primary, fontSize: themeProperties.fontSize.mdp, fontWeight: themeProperties.fontWeight.bolder}}>User Settings</Typography>
+                            <TextField label="First Name" variant="outlined" value={firstName}
+                                sx={{marginTop: '40px', width: '100%', color: themeProperties.colors.textPrimary}}
+                                inputProps={{style: style.textField}}
+                                InputLabelProps={{style: style.textField}}
+                                onChange={(event) => setFirstName(event.target.value)}
                             />
-                        </LocalizationProvider>
-                        <Button variant="contained" disableElevation sx={style.confirmButton} onClick={confirm}>
-                            Confirm
-                        </Button>
-                    </Box>
+                            <TextField label="Last Name" variant="outlined" value={lastName}
+                                sx={{marginTop: '13px', width: '100%', color: themeProperties.colors.textPrimary}}
+                                inputProps={{style: style.textField}}
+                                InputLabelProps={{style: style.textField}}
+                                onChange={(event) => setLastName(event.target.value)}
+                            />
+                            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                <DesktopDatePicker
+                                    label="Date Of Birth"
+                                    inputFormat="DD/MM/YYYY"
+                                    value={dateOfBirth}
+                                    onChange={(value) => setDateOfBirth(value)}
+                                    renderInput={(params) => 
+                                        <TextField 
+                                            sx={{marginTop: '13px', width: '100%', color: themeProperties.colors.textPrimary}}
+                                            inputProps={{style: style.textField}}
+                                            InputLabelProps={{style: style.textField}}
+                                            {...params}  
+                                        />
+                                    }
+                                />
+                            </LocalizationProvider>
+                            <Button variant="contained" disableElevation sx={style.confirmButton} onClick={confirm}>
+                                Confirm
+                            </Button>
+                        </Box>
+                    </Grid>
                 </Grid>
-            </Grid>
-        </Box>
-    );
+            </Box>
+        );
+    }
 }
 
 export default Setup;

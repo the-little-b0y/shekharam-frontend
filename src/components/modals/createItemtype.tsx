@@ -51,7 +51,7 @@ const CreateItemType: FunctionComponent<Props> = ({open, handleClose, modalHead,
                 setFreshDrop(false)
             }
         }
-    }, [open]);
+    }, [open, editItemtype]);
 
     const removeItem = (index: number) => {
         let tempArray = [...itemimage];

@@ -118,13 +118,13 @@ const FixedDrawer: FunctionComponent<Props> = ({children})  => {
                             }
                         }}
                     >
-                        <ListItemButton sx={(path === route.path) ? style.drawerButtonActive : style.drawerButtonInactiveActive}>
+                        <ListItemButton sx={(path === route.rootpath) ? style.drawerButtonActive : style.drawerButtonInactiveActive}>
                             <ListItemIcon>
-                                <route.icon style={(path === route.path) ? {color: themeProperties.colors.primary, minWidth: '40px'} : {color: themeProperties.colors.textPrimary, minWidth: '40px'}} />
+                                <route.icon style={(path === route.rootpath) ? {color: themeProperties.colors.primary, minWidth: '40px'} : {color: themeProperties.colors.textPrimary, minWidth: '40px'}} />
                             </ListItemIcon>
                             <ListItemText 
                                 disableTypography
-                                primary={<Typography sx={(path === route.path) ? {fontSize: themeProperties.fontSize.xs, color: themeProperties.colors.textPrimary, fontWeight: themeProperties.fontWeight.bolder} : {fontSize: themeProperties.fontSize.xs, color: themeProperties.colors.textPrimary}}>{route.name}</Typography>}                                    
+                                primary={<Typography sx={(path === route.rootpath) ? {fontSize: themeProperties.fontSize.xs, color: themeProperties.colors.textPrimary, fontWeight: themeProperties.fontWeight.bolder} : {fontSize: themeProperties.fontSize.xs, color: themeProperties.colors.textPrimary}}>{route.name}</Typography>}                                    
                             />
                         </ListItemButton>
                     </ListItem>
