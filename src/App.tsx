@@ -1,25 +1,47 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { FunctionComponent} from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { routeList } from './constants/routes';
+import { Pagenotfound } from './containers/pagenotfoundContainer';
+import { ThemeProvider, createTheme } from "@mui/material/styles";
+import 'react-phone-input-2/lib/material.css'
+import './App.css'
 
-function App() {
+const theme = createTheme({
+  palette: {
+    background: {
+      default: "#DCE8EF"
+    },
+  },
+  typography: {
+    fontFamily: 'Signika'
+  }
+});
+
+const AuthWrapper: FunctionComponent<{isAuthenticated : boolean}> = ({isAuthenticated}) => {
+  return isAuthenticated ? (
+    <Navigate to="/dashboard" replace />
+  ) : (
+    <Navigate to="/login" replace />
+  );
+};
+
+const App = () => {
+  const isAuthenticated = false;
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <ThemeProvider theme={theme}>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<AuthWrapper isAuthenticated={isAuthenticated} />}/>
+          {routeList.map(route => {
+            return (
+              <Route key={route.path} path={route.path} element={<route.component />} />
+            )
+          })}
+          <Route path="*" element={<Pagenotfound />} />
+        </Routes>
+      </BrowserRouter>
+    </ThemeProvider>
   );
 }
 
