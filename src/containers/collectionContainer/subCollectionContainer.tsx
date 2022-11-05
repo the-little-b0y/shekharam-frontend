@@ -27,15 +27,19 @@ const SubCollection: FunctionComponent<Props> = ()  => {
 
     const fetchPageApis = async() => {
         if(itemtype) {
-            setLoading(true)
-            const response = await getConfiguration()
-            setItemTypes(response.data ? response.data.collectionItemTypes : [])
-            const isItemAdded = response.data.collectionItemTypes.find(item => item.itemtype.trim().toLowerCase().replace(/\s/g,'') === itemtype.trim().toLowerCase().replace(/\s/g,''))
-            if(!isItemAdded) {
-                enqueueSnackbar(`${capitalize(itemtype)} is not added as an Item type in Configuration. Redirecting back.`, { variant: "info", preventDuplicate: true })
-                navigate('/collection')
+            try {
+                setLoading(true)
+                const response = await getConfiguration()
+                setItemTypes(response.data ? response.data.collectionItemTypes : [])
+                const isItemAdded = response.data.collectionItemTypes.find(item => item.itemtype.trim().toLowerCase().replace(/\s/g,'') === itemtype.trim().toLowerCase().replace(/\s/g,''))
+                if(!isItemAdded) {
+                    enqueueSnackbar(`${capitalize(itemtype)} is not added as an Item type in Configuration. Redirecting back.`, { variant: "info", preventDuplicate: true })
+                    navigate('/collection')
+                }
+                setLoading(false)
+            } catch (error) {
+                setLoading(false)
             }
-            setLoading(false)
         }
     }
 

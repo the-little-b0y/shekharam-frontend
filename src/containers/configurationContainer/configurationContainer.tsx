@@ -60,31 +60,45 @@ const Configuration: FunctionComponent<Props> = ()  => {
     }, []);
 
     const fetchPageApis = async() => {
-        setLoading(true)
-        const response = await getConfiguration()
-        setItemTypes(response.data ? response.data.collectionItemTypes : [])
-        setConditionTypes(response.data ? response.data.conditionTypes : [])
-        setLoading(false)
+        try {
+            setLoading(true)
+            const response = await getConfiguration()
+            setItemTypes(response.data ? response.data.collectionItemTypes : [])
+            setConditionTypes(response.data ? response.data.conditionTypes : [])
+            setLoading(false)
+        } catch (error) {
+            setLoading(false)
+        }
     }
 
     const addCollectionItemType = async(itemtype: string, itemimage: string) => {
-        setLoading(true)
-        const collectionItemType: CollectionItemTypeInterface = { itemtype, itemimage }
-        const response = await postCollectionItemType(collectionItemType)
-        enqueueSnackbar(response.message, { variant: "success", preventDuplicate: true })
-        fetchPageApis()
-        setOpen(false)
-        setLoading(false)
+        try {
+            setLoading(true)
+            const collectionItemType: CollectionItemTypeInterface = { itemtype, itemimage }
+            const response = await postCollectionItemType(collectionItemType)
+            enqueueSnackbar(response.message, { variant: "success", preventDuplicate: true })
+            fetchPageApis()
+            setOpen(false)
+            setLoading(false)
+        } catch (error) {
+            setOpen(false)
+            setLoading(false)
+        }
     }
 
     const addConditionType = async(conditiontype: string) => {
-        setLoading(true)
-        const conditionType: ConditionTypeInterface = { conditiontype }
-        const response = await postConditionType(conditionType)
-        enqueueSnackbar(response.message, { variant: "success", preventDuplicate: true })
-        fetchPageApis()
-        setOpen2(false)
-        setLoading(false)
+        try {
+            setLoading(true)
+            const conditionType: ConditionTypeInterface = { conditiontype }
+            const response = await postConditionType(conditionType)
+            enqueueSnackbar(response.message, { variant: "success", preventDuplicate: true })
+            fetchPageApis()
+            setOpen2(false)
+            setLoading(false)
+        } catch (error) {
+            setOpen2(false)
+            setLoading(false)
+        }
     }
 
     const editCollectionItemType = async(item: CollectionItemTypeInterface) => {
@@ -99,33 +113,45 @@ const Configuration: FunctionComponent<Props> = ()  => {
 
     const confirmeditCollectionItemType = async(itemtype: string, itemimage: string) => {
         if(editItemtype) {
-            setLoading(true)
-            const collectionItemType: CollectionItemTypeInterface = { 
-                itemtype, itemimage,
-                _id: editItemtype._id
+            try {
+                setLoading(true)
+                const collectionItemType: CollectionItemTypeInterface = { 
+                    itemtype, itemimage,
+                    _id: editItemtype._id
+                }
+                const response = await putCollectionItemType(collectionItemType)
+                enqueueSnackbar(response.message, { variant: "success", preventDuplicate: true })
+                fetchPageApis()
+                setOpen(false)
+                setEditItemType(undefined)
+                setLoading(false)
+            } catch (error) {
+                setOpen(false)
+                setEditItemType(undefined)
+                setLoading(false)
             }
-            const response = await putCollectionItemType(collectionItemType)
-            enqueueSnackbar(response.message, { variant: "success", preventDuplicate: true })
-            fetchPageApis()
-            setOpen(false)
-            setEditItemType(undefined)
-            setLoading(false)
         }
     }
 
     const confirmeditConditionType = async(conditiontype: string) => {
         if(editItemtype) {
-            setLoading(true)
-            const conditionType: ConditionTypeInterface = { 
-                conditiontype,
-                _id: editItemtype._id
+            try {
+                setLoading(true)
+                const conditionType: ConditionTypeInterface = { 
+                    conditiontype,
+                    _id: editItemtype._id
+                }
+                const response = await putConditionType(conditionType)
+                enqueueSnackbar(response.message, { variant: "success", preventDuplicate: true })
+                fetchPageApis()
+                setOpen2(false)
+                setEditConditionType(undefined)
+                setLoading(false)
+            } catch (error) {
+                setOpen2(false)
+                setEditConditionType(undefined)
+                setLoading(false)
             }
-            const response = await putConditionType(conditionType)
-            enqueueSnackbar(response.message, { variant: "success", preventDuplicate: true })
-            fetchPageApis()
-            setOpen2(false)
-            setEditConditionType(undefined)
-            setLoading(false)
         }
     }
 
@@ -141,25 +167,37 @@ const Configuration: FunctionComponent<Props> = ()  => {
 
     const confirmRemoveCollectionItemType = async() => {
         if(deletionId) {
-            setLoading(true)
-            const response = await deleteCollectionItemType(deletionId)
-            enqueueSnackbar(response.message, { variant: "success", preventDuplicate: true })
-            fetchPageApis()
-            setOpenConfirmation(false)
-            setDeletionId('')
-            setLoading(false)
+            try {
+                setLoading(true)
+                const response = await deleteCollectionItemType(deletionId)
+                enqueueSnackbar(response.message, { variant: "success", preventDuplicate: true })
+                fetchPageApis()
+                setOpenConfirmation(false)
+                setDeletionId('')
+                setLoading(false)
+            } catch (error) {
+                setOpenConfirmation(false)
+                setDeletionId('')
+                setLoading(false)
+            }
         }
     }
 
     const confirmRemoveConditionType = async() => {
         if(deletionId) {
-            setLoading(true)
-            const response = await deleteConditionType(deletionId2)
-            enqueueSnackbar(response.message, { variant: "success", preventDuplicate: true })
-            fetchPageApis()
-            setOpenConfirmation2(false)
-            setDeletionId2('')
-            setLoading(false)
+            try {
+                setLoading(true)
+                const response = await deleteConditionType(deletionId2)
+                enqueueSnackbar(response.message, { variant: "success", preventDuplicate: true })
+                fetchPageApis()
+                setOpenConfirmation2(false)
+                setDeletionId2('')
+                setLoading(false)
+            } catch (error) {
+                setOpenConfirmation2(false)
+                setDeletionId2('')
+                setLoading(false)
+            }
         }
     }
 

@@ -66,26 +66,30 @@ const Register: FunctionComponent<Props> = ()  => {
             } else if(password.length > 0 && !specialCharactersRegex.test(password)) {
                 enqueueSnackbar('Password should contain atleast one Special Character', { variant: "warning", preventDuplicate: true })
             } else {
-                setLoading(true)
-                const user: PostUserInterface = {
-                    mobileNumber,
-                    password
+                try {
+                    setLoading(true)
+                    const user: PostUserInterface = {
+                        mobileNumber,
+                        password
+                    }
+                    const response = await postUser(user)
+                    enqueueSnackbar(response.message, { variant: "success", preventDuplicate: true })
+                    
+                    const response1 = await authenticate(user)
+                    dispatch(setAccesstoken(response1.data.accessToken))
+                    dispatch(setRefreshtoken(response1.data.refreshToken))
+                    const response2 = await getUser()
+                    dispatch(setUser(response1.data))
+                    enqueueSnackbar(response.message, { variant: "success", preventDuplicate: true })
+                    if(response2.data.firstName) {
+                        navigate('/dashboard')
+                    } else {
+                        navigate('/setup')
+                    }
+                    setLoading(false)
+                } catch (error) {
+                    setLoading(false)
                 }
-                const response = await postUser(user)
-                enqueueSnackbar(response.message, { variant: "success", preventDuplicate: true })
-                
-                const response1 = await authenticate(user)
-                dispatch(setAccesstoken(response1.data.accessToken))
-                dispatch(setRefreshtoken(response1.data.refreshToken))
-                const response2 = await getUser()
-                dispatch(setUser(response1.data))
-                enqueueSnackbar(response.message, { variant: "success", preventDuplicate: true })
-                if(response2.data.firstName) {
-                    navigate('/dashboard')
-                } else {
-                    navigate('/setup')
-                }
-                setLoading(false)
             }
         }
     }

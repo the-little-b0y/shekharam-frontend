@@ -44,11 +44,15 @@ const Collection: FunctionComponent<Props> = ()  => {
     }, []);
 
     const fetchPageApis = async() => {
-        setLoading(true)
-        const response = await getConfiguration()
-        setItemTypes(response.data ? response.data.collectionItemTypes : [])
-        setConditionTypes(response.data ? response.data.conditionTypes : [])
-        setLoading(false)
+        try {
+            setLoading(true)
+            const response = await getConfiguration()
+            setItemTypes(response.data ? response.data.collectionItemTypes : [])
+            setConditionTypes(response.data ? response.data.conditionTypes : [])
+            setLoading(false)    
+        } catch (error) {
+            setLoading(false) 
+        }
     }
 
     if(loading) {

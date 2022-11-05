@@ -35,10 +35,14 @@ const Dashboard: FunctionComponent<Props> = ()  => {
     }, []);
 
     const fetchPageApis = async() => {
-        setLoading(true)
-        const response = await getConfiguration()
-        setItemTypes(response.data ? response.data.collectionItemTypes : [])
-        setLoading(false)
+        try {
+            setLoading(true)
+            const response = await getConfiguration()
+            setItemTypes(response.data ? response.data.collectionItemTypes : [])
+            setLoading(false)
+        } catch (error) {
+            setLoading(false)
+        }
     }
 
     if(loading) {

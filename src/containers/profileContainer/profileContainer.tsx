@@ -84,24 +84,33 @@ const Profile: FunctionComponent<Props> = ()  => {
     }, [reduxUser?.avatar, reduxUser?.greeting]);
 
     const updatePersonal = async (updated: PutUserInterface) => {
-        setLoading(true)
-        const response = await putUser(updated)
-        const response1 = await getUser()
-        dispatch(setUser(response1.data))
-        enqueueSnackbar(response.message, { variant: "success", preventDuplicate: true })
-        setOpen(false)
-        setLoading(false)
+        try {
+            setLoading(true)
+            const response = await putUser(updated)
+            const response1 = await getUser()
+            dispatch(setUser(response1.data))
+            enqueueSnackbar(response.message, { variant: "success", preventDuplicate: true })
+            setOpen(false)
+            setLoading(false)
+        } catch (error) {
+            setOpen(false)
+            setLoading(false)
+        }
     }
 
     const saveAvatarGreeting = async () => {
-        setLoading(true)
-        const selectedAv = avatar ? avatar : avatarIcons[0].name
-        const selectedGr = greeting ? greeting : greetings[0]
-        const response = await putAvatarGreeting(selectedAv, selectedGr)
-        const response1 = await getUser()
-        dispatch(setUser(response1.data))
-        enqueueSnackbar(response.message, { variant: "success", preventDuplicate: true })
-        setLoading(false)
+        try {
+            setLoading(true)
+            const selectedAv = avatar ? avatar : avatarIcons[0].name
+            const selectedGr = greeting ? greeting : greetings[0]
+            const response = await putAvatarGreeting(selectedAv, selectedGr)
+            const response1 = await getUser()
+            dispatch(setUser(response1.data))
+            enqueueSnackbar(response.message, { variant: "success", preventDuplicate: true })
+            setLoading(false)
+        } catch (error) {
+            setLoading(false)
+        }
     }
 
     const savePassword = async() => {
@@ -120,14 +129,22 @@ const Profile: FunctionComponent<Props> = ()  => {
         } else if(newpassword.length > 0 && !specialCharactersRegex.test(newpassword)) {
             enqueueSnackbar('New Password should contain atleast one Special Character', { variant: "warning", preventDuplicate: true })
         } else {
-            setLoading(true)
-            const response = await putRestPassword(currentpassword, newpassword)
-            setShowCurrentPassword(false)
-            setCurrentPassword('')
-            setShowNewPassword(false)
-            setNewPassword('')
-            enqueueSnackbar(response.message, { variant: "success", preventDuplicate: true })
-            setLoading(false)
+            try {
+                setLoading(true)
+                const response = await putRestPassword(currentpassword, newpassword)
+                setShowCurrentPassword(false)
+                setCurrentPassword('')
+                setShowNewPassword(false)
+                setNewPassword('')
+                enqueueSnackbar(response.message, { variant: "success", preventDuplicate: true })
+                setLoading(false)
+            } catch (error) {
+                setShowCurrentPassword(false)
+                setCurrentPassword('')
+                setShowNewPassword(false)
+                setNewPassword('')
+                setLoading(false)
+            }
         }
     }
 
