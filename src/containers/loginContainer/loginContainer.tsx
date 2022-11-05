@@ -55,23 +55,27 @@ const Login: FunctionComponent<Props> = ()  => {
             } else if(password.length === 0) {
                 enqueueSnackbar('Please enter a Password', { variant: "warning", preventDuplicate: true })
             } else {
-                setLoading(true)
-                const user: AuthUserInterface = {
-                    mobileNumber,
-                    password
+                try {
+                    setLoading(true)
+                    const user: AuthUserInterface = {
+                        mobileNumber,
+                        password
+                    }
+                    const response = await authenticate(user)
+                    enqueueSnackbar(response.message, { variant: "success", preventDuplicate: true })
+                    dispatch(setAccesstoken(response.data.accessToken))
+                    dispatch(setRefreshtoken(response.data.refreshToken))
+                    const response1 = await getUser()
+                    dispatch(setUser(response1.data))
+                    if(response1.data.firstName) {
+                        navigate('/dashboard')
+                    } else {
+                        navigate('/setup')
+                    }
+                    setLoading(false)
+                } catch (error) {
+                    setLoading(false)
                 }
-                const response = await authenticate(user)
-                enqueueSnackbar(response.message, { variant: "success", preventDuplicate: true })
-                dispatch(setAccesstoken(response.data.accessToken))
-                dispatch(setRefreshtoken(response.data.refreshToken))
-                const response1 = await getUser()
-                dispatch(setUser(response1.data))
-                if(response1.data.firstName) {
-                    navigate('/dashboard')
-                } else {
-                    navigate('/setup')
-                }
-                setLoading(false)
             }
         }
     }

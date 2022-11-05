@@ -58,18 +58,22 @@ const Setup: FunctionComponent<Props> = ()  => {
         } else if(dateOfBirth > new Date()) {
             enqueueSnackbar('Entered Date of Birth is Invalid', { variant: "warning", preventDuplicate: true })
         } else {
-            setLoading(true)
-            const user: PutUserInterface = {
-                firstName: firstName.trim(),
-                lastName: lastName.trim(),
-                dateOfBirth: new Date(dateOfBirth)
+            try {
+                setLoading(true)
+                const user: PutUserInterface = {
+                    firstName: firstName.trim(),
+                    lastName: lastName.trim(),
+                    dateOfBirth: new Date(dateOfBirth)
+                }
+                const response = await putUser(user)
+                const response1 = await getUser()
+                dispatch(setUser(response1.data))
+                enqueueSnackbar(response.message, { variant: "success", preventDuplicate: true })
+                navigate('/dashboard')
+                setLoading(false)
+            } catch (error) {
+                setLoading(false)
             }
-            const response = await putUser(user)
-            const response1 = await getUser()
-            dispatch(setUser(response1.data))
-            enqueueSnackbar(response.message, { variant: "success", preventDuplicate: true })
-            navigate('/dashboard')
-            setLoading(false)
         }
     }
 
