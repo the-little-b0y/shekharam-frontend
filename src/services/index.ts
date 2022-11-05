@@ -41,7 +41,7 @@ axios.interceptors.response.use((response) => {
             useDispatchRef(setUser({}))
             localStorage.clear(); 
             useSnackbarRef.enqueueSnackbar(data.message, { variant: "warning", preventDuplicate: true })
-            useSnackbarRef.enqueueSnackbar('Redirecting to Login', { variant: "info", preventDuplicate: true })
+            useSnackbarRef.enqueueSnackbar('Please Login', { variant: "info", preventDuplicate: true })
             setTimeout(() => window.location.replace('/login'), 3000)
         } else if(status === 401  && data.errors && data.errors.length > 0 && data.errors[0].msg === "TokenExpiredError") {
             const prevRequest = error.config;

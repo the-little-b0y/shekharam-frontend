@@ -26,7 +26,8 @@ const AuthWrapper: FunctionComponent<{isAuthenticated : boolean}> = ({isAuthenti
 };
 
 const App = () => {
-  const isAuthenticated = false;
+  const accesstoken = localStorage.getItem('accesstoken');
+  const isAuthenticated = (accesstoken && accesstoken.length > 0) ? true : false;
 
   return (
     <ThemeProvider theme={theme}>
