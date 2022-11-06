@@ -87,7 +87,7 @@ const Dashboard: FunctionComponent<Props> = ()  => {
                                     onClick={() => navigate('/configuration')}
                                 >
                                     <ArrowForwardIcon style={{color: themeProperties.colors.primary, fontSize: themeProperties.fontSize.mdp}} />
-                                    <Typography style={{marginTop: '5px', color: themeProperties.colors.tertiary, fontSize: themeProperties.fontSize.xs, textAlign: 'center'}}>Let's sail to Configuration, to add a <span style={{fontWeight: themeProperties.fontWeight.bolder}}>Collection Item type</span></Typography>
+                                    <Typography style={{marginTop: '5px', color: themeProperties.colors.tertiary, fontSize: themeProperties.fontSize.xs, textAlign: 'center'}}>Sail to Configuration, and add a <span style={{fontWeight: themeProperties.fontWeight.bolder}}>Collection Item type</span></Typography>
                                 </Box>
                             </Grid>
                         </Grid>

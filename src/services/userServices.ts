@@ -4,7 +4,7 @@ import { ApiResponse } from '../contracts/axiosInterface';
 
 const BACKEND_API_URL = process.env.REACT_APP_BACKEND_API_URL;
 const USERSERVICE_ROUTE = `${BACKEND_API_URL}/user`
-const AVATARGREETING_ROUTE = `${USERSERVICE_ROUTE}/avatar`
+const VAGREETING_ROUTE = `${USERSERVICE_ROUTE}/va`
 const PASSWORDRESET_ROUTE = `${USERSERVICE_ROUTE}/passwordreset`
 
 export const postUser = async (user: PostUserInterface) => {
@@ -22,9 +22,9 @@ export const putUser = async (user: PutUserInterface) => {
     return response.data
 }
 
-export const putAvatarGreeting = async (avatar: string, greeting: string) => {
-    const avatarGreeting = { avatar, greeting }
-    const response = await axios.put<ApiResponse>(AVATARGREETING_ROUTE, avatarGreeting)
+export const putVaGreeting = async (va: string, greeting: string) => {
+    const vaGreeting = { va, greeting }
+    const response = await axios.put<ApiResponse>(VAGREETING_ROUTE, vaGreeting)
     return response.data
 }
 

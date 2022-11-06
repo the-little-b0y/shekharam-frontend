@@ -1,26 +1,12 @@
-import OwlAvatar from '../assets/images/owlAvatar.png'
-import BearAvatar from '../assets/images/bearAvatar.png'
-import FoxAvatar from '../assets/images/foxAvatar.png'
-import GiraffeAvatar from '../assets/images/giraffeAvatar.png'
-import PandaAvatar from '../assets/images/pandaAvatar.png'
-import { AvatarInterface, GetUserInterface } from '../contracts/userInterface'
+import { VaInterface, GetUserInterface } from '../contracts/userInterface'
 
-export const avatarIcons: AvatarInterface[] = [{
-    name: 'owl',
-    value: OwlAvatar
-}, {
-    name: 'bear',
-    value: BearAvatar
-}, {
-    name: 'fox',
-    value: FoxAvatar
-}, {
-    name: 'giraffe',
-    value: GiraffeAvatar
-}, {
-    name: 'panda',
-    value: PandaAvatar
-}]
+export const vaIcons: VaInterface[] = Array.from(Array(35).keys()).map(item => {
+    const vaIcon: VaInterface = {
+        name: `va-${String(item + 1)}`,
+        value: require(`../assets/images/va-${String(item + 1)}.png`)
+    }
+    return vaIcon
+})
 
 export const greetings: string[] = ['Hello, ', 'Hi, ', 'Hola, ']
 
@@ -30,11 +16,11 @@ export const getTimeGreeting = () => {
     return greeting
 }
 
-export const getMyAvatarIcon = (user: GetUserInterface | undefined) => {
-    let selectedAvatar = avatarIcons[0]
-    if(user && user.avatar) {
-        const theAvatar = avatarIcons.find(icon => icon.name === user.avatar)
-        selectedAvatar = theAvatar ? theAvatar : avatarIcons[0]
+export const getMyVaIcon = (user: GetUserInterface | undefined) => {
+    let selectedVa = vaIcons[0]
+    if(user && user.va) {
+        const theVa = vaIcons.find(icon => icon.name === user.va)
+        selectedVa = theVa ? theVa : vaIcons[0]
     }
-    return selectedAvatar.value
+    return selectedVa.value
 }

@@ -1,5 +1,5 @@
 import { FunctionComponent, useState, useEffect } from 'react';
-import { Grid, Box, Typography, IconButton, Tooltip, FormControl, InputLabel, Select, MenuItem, Button, OutlinedInput, InputAdornment, FormControlLabel, Radio } from '@mui/material';
+import { Grid, Box, Typography, IconButton, Tooltip, FormControl, InputLabel, Select, MenuItem, Button, OutlinedInput, InputAdornment, FormControlLabel, Radio, Paper } from '@mui/material';
 import FixedDrawer from '../../components/common/fixedDrawer';
 import SuggestionBox from '../../components/common/suggestionBox';
 import { themeProperties } from '../../constants/themeProperties';
@@ -7,17 +7,19 @@ import { useSelector } from 'react-redux'
 import { ReduxInterface } from '../../contracts/authInterface';
 import { GetUserInterface, PutUserInterface } from '../../contracts/userInterface';
 import EditIcon from '@mui/icons-material/Edit';
-import { lighten, darken } from '@mui/material/styles';
+import { lighten, darken, useTheme } from '@mui/material/styles';
 import EditPersonal from '../../components/modals/editPersonals';
-import { getUser, putAvatarGreeting, putRestPassword, putUser } from '../../services/userServices';
+import { getUser, putVaGreeting, putRestPassword, putUser } from '../../services/userServices';
 import { useSnackbar } from 'notistack';
 import { useDispatch } from 'react-redux'
 import { setUser } from '../../redux/authSlice';
-import { avatarIcons, greetings } from '../../constants/greetings';
+import { vaIcons, greetings } from '../../constants/greetings';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import { specialCharactersRegex } from '../../constants/regex';
 import Loading from '../../components/common/loading';
+import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
+import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
 
 const style = {
     editButton: {
@@ -26,13 +28,13 @@ const style = {
             backgroundColor: themeProperties.colors.quaternary,
         }
     },
-    avatar: {
+    va: {
         padding: '10px',
         '&:hover': {
             backgroundColor: lighten(themeProperties.colors.quaternary, 0.3),
         }
     },
-    selectedAvatar: {
+    selectedVa: {
         padding: '10px',
         backgroundColor: themeProperties.colors.quaternary,
         '&:hover': {
@@ -56,6 +58,7 @@ interface Props {
 const Profile: FunctionComponent<Props> = ()  => {
     const reduxState = useSelector((state) => state) as ReduxInterface
     const { enqueueSnackbar } = useSnackbar();
+    const theme = useTheme();
     const dispatch = useDispatch()
 
     let reduxUser:GetUserInterface|undefined;
@@ -65,23 +68,31 @@ const Profile: FunctionComponent<Props> = ()  => {
 
     const [loading, setLoading] = useState<boolean>(false)
     const [open, setOpen] = useState<boolean>(false)
-    const [avatar, setAvatar] = useState<string>('')
+    const [va, setVa] = useState<number>(-1)
     const [greeting, setGreeting] = useState<string>('')
     const [showCurrentPassword, setShowCurrentPassword] = useState<boolean>(false)
     const [currentpassword, setCurrentPassword] = useState<string>('')
     const [showNewPassword, setShowNewPassword] = useState<boolean>(false)
     const [newpassword, setNewPassword] = useState<string>('')
+    const maxSteps = vaIcons.length;
 
     useEffect(() => {
         if(reduxUser) {
             if(reduxUser.greeting) {
                 setGreeting(reduxUser.greeting)
             }
-            if(reduxUser.avatar) {
-                setAvatar(reduxUser.avatar)
+            if(reduxUser.va) {
+                const index = vaIcons.findIndex(icon => icon.name === reduxUser?.va)
+                if(index > -1) {
+                    setVa(index)
+                } else {
+                    setVa(0)
+                }
+            } else {
+                setVa(0)
             }
         }
-    }, [reduxUser?.avatar, reduxUser?.greeting]);
+    }, [reduxUser?.va, reduxUser?.greeting]);
 
     const updatePersonal = async (updated: PutUserInterface) => {
         try {
@@ -98,12 +109,12 @@ const Profile: FunctionComponent<Props> = ()  => {
         }
     }
 
-    const saveAvatarGreeting = async () => {
+    const saveVaGreeting = async () => {
         try {
             setLoading(true)
-            const selectedAv = avatar ? avatar : avatarIcons[0].name
+            const selectedAv = (va > -1) ? vaIcons[va].name : vaIcons[0].name
             const selectedGr = greeting ? greeting : greetings[0]
-            const response = await putAvatarGreeting(selectedAv, selectedGr)
+            const response = await putVaGreeting(selectedAv, selectedGr)
             const response1 = await getUser()
             dispatch(setUser(response1.data))
             enqueueSnackbar(response.message, { variant: "success", preventDuplicate: true })
@@ -147,6 +158,14 @@ const Profile: FunctionComponent<Props> = ()  => {
             }
         }
     }
+
+    const handleNext = () => {
+        setVa((prevVa) => prevVa + 1);
+    };
+    
+    const handleBack = () => {
+        setVa((prevVa) => prevVa - 1);
+    };
 
     const handleMouseDownCurrentPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
@@ -246,24 +265,28 @@ const Profile: FunctionComponent<Props> = ()  => {
                             mt={'25px'}
                             p={'20px'}
                         >
-                            <Typography style={{color: themeProperties.colors.tertiary, fontSize: themeProperties.fontSize.md, fontWeight: themeProperties.fontWeight.bolder}}>Your Avatar and Greetings</Typography>
-                            <Typography style={{marginTop: '20px', marginBottom: '5px', color: themeProperties.colors.textPrimary, fontSize: themeProperties.fontSize.sm}}>Avatar:</Typography>
-                            <Grid container spacing={2}>
-                                {avatarIcons.map((icon, index) => {
-                                    return (
-                                        <Grid key={icon.name} item xs={2}>
-                                            <IconButton
-                                                size="small"
-                                                color="inherit"
-                                                sx={avatar ? (avatar === icon.name ? style.selectedAvatar : style.avatar) : (index === 0 ? style.selectedAvatar : style.avatar)}
-                                                onClick={() => setAvatar(icon.name)}
-                                            >
-                                                <img style={{height: '30px'}} alt={icon.name} src={icon.value} />
-                                            </IconButton>
-                                        </Grid>
-                                    )
-                                })}
-                            </Grid>
+                            <Typography style={{color: themeProperties.colors.tertiary, fontSize: themeProperties.fontSize.md, fontWeight: themeProperties.fontWeight.bolder}}>Your Virtual Associate and Greetings</Typography>
+                            <Typography style={{marginTop: '20px', marginBottom: '5px', color: themeProperties.colors.textPrimary, fontSize: themeProperties.fontSize.sm}}>Virtual Associate:</Typography>
+                            {(va > -1) &&
+                                <Box
+                                    display="flex"
+                                    justifyContent={'center'}
+                                    alignItems={'center'}
+                                    flexDirection={'column'}
+                                    
+                                >
+                                    <img style={{height: '250px'}} src={vaIcons[va].value} alt={vaIcons[va].name} />
+                                    <Typography style={{marginTop: '10px', color: themeProperties.colors.tertiary, fontSize: themeProperties.fontSize.sm}}>{`Virtual Associate - ${String(va + 1)}`}</Typography>
+                                    <Box>
+                                        <Button size="small" onClick={handleBack} disabled={va === 0}>
+                                            <KeyboardArrowLeft /> Back
+                                        </Button>
+                                        <Button size="small" onClick={handleNext} disabled={va === maxSteps - 1}>
+                                            Next <KeyboardArrowRight />
+                                        </Button>
+                                    </Box>
+                                </Box>
+                            }
     
                             <FormControl fullWidth style={{marginTop: '25px', background: themeProperties.colors.white}}>
                                 <InputLabel id="greeting-select-label">Greeting</InputLabel>
@@ -283,7 +306,7 @@ const Profile: FunctionComponent<Props> = ()  => {
                                 </Select>
                             </FormControl>
     
-                            <Button variant="contained" disableElevation sx={style.saveButton} onClick={saveAvatarGreeting}>
+                            <Button variant="contained" disableElevation sx={style.saveButton} onClick={saveVaGreeting}>
                                 Save
                             </Button>
                         </Box>

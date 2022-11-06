@@ -12,7 +12,7 @@ export interface GetUserInterface {
     lastName: string,
     dateOfBirth: Date | null,
     greeting?: string,
-    avatar?: string
+    va?: string
 }
 
 export interface GetUserReturnInterface extends ApiResponse {
@@ -25,7 +25,7 @@ export interface PutUserInterface {
     dateOfBirth: Date | null
 }
 
-export interface AvatarInterface {
+export interface VaInterface {
     name: string,
     value: string
 }
