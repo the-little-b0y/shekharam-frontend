@@ -23,7 +23,7 @@ const Clock: FunctionComponent<Props> = ()  => {
         <Box
             display="flex"
             flexDirection={'column'}
-            style={matches ? {float: 'right', marginTop: '15px'} : {alignItems: 'center'}}
+            style={matches ? {float: 'right', marginTop: '30px'} : {alignItems: 'center'}}
         >
             <Box
                 display="flex"
