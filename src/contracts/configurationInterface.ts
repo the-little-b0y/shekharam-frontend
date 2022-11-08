@@ -13,9 +13,16 @@ export interface ConditionTypeInterface {
 
 export interface GetConfigurationInterface {
     collectionItemTypes: CollectionItemTypeInterface[],
-    conditionTypes: ConditionTypeInterface[]
+    conditionTypes: ConditionTypeInterface[],
+    currency: string
 }
 
 export interface GetConfigurationReturnInterface extends ApiResponse {
     data: GetConfigurationInterface
+}
+
+export interface CurrencyInterface {
+    code: string;
+    expansion: string;
+    symbol: string;
 }
