@@ -25,6 +25,7 @@ const ScanQrcode: FunctionComponent<Props> = ({open, handleClose, modalHead, rea
             <Box width={'100%'}>
                 <QrReader
                     delay={100}
+                    facingMode="rear"
                     style={previewStyle}
                     onError={(err: any) => {}}
                     onScan={(data: any) => {
