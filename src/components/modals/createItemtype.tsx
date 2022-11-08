@@ -61,9 +61,9 @@ const CreateItemType: FunctionComponent<Props> = ({open, handleClose, modalHead,
 
     const saveChanges = () => {
         if(itemtype.trim().length === 0) {
-            enqueueSnackbar('Please enter an Item type', { variant: "warning", preventDuplicate: true })
+            enqueueSnackbar('Please enter an Collection Name', { variant: "warning", preventDuplicate: true })
         } else if(itemimage.length === 0) {
-            enqueueSnackbar('Please drop an Item Image', { variant: "warning", preventDuplicate: true })
+            enqueueSnackbar('Please drop an Collection Image', { variant: "warning", preventDuplicate: true })
         } else {
             const imageurl = URL.createObjectURL(itemimage[0]);
             const image = new Image();
@@ -100,9 +100,9 @@ const CreateItemType: FunctionComponent<Props> = ({open, handleClose, modalHead,
 
     const updateChanges = () => {
         if(itemtype.trim().length === 0) {
-            enqueueSnackbar('Please enter an Item type', { variant: "warning", preventDuplicate: true })
+            enqueueSnackbar('Please enter an Collection type', { variant: "warning", preventDuplicate: true })
         } else if(itemimage.length === 0) {
-            enqueueSnackbar('Please drop an Item Image', { variant: "warning", preventDuplicate: true })
+            enqueueSnackbar('Please drop an Collection Image', { variant: "warning", preventDuplicate: true })
         } else if(!freshDrop && editItemtype) {
             confirmeditCollectionItemType(itemtype.trim(), editItemtype.itemimage)
         } else if(freshDrop) {
@@ -151,7 +151,7 @@ const CreateItemType: FunctionComponent<Props> = ({open, handleClose, modalHead,
             modalHead={modalHead}
         >
             <Box width={'100%'}>
-                <TextField label="Item Type" variant="outlined" value={itemtype}
+                <TextField label="Collection" variant="outlined" value={itemtype}
                     sx={{marginTop: '13px', marginBottom: '13px', width: '100%', color: themeProperties.colors.textPrimary}}
                     inputProps={{style: style.textField}}
                     InputLabelProps={{style: style.textField}}
@@ -162,7 +162,7 @@ const CreateItemType: FunctionComponent<Props> = ({open, handleClose, modalHead,
                     filesLimit={1}
                     sizeLimitPerFile={1}
                     onDrop={onDrop}
-                    label={'Item Image'}
+                    label={'Collection Image'}
                     tips={"Add a 1:1 ratio image of type either JPG/JPEG/PNG"}
                     addedFiles={itemimage}
                     removeItem={removeItem}

@@ -50,7 +50,7 @@ const SuggestionBox: FunctionComponent<Props> = ({greetingType, subtext})  => {
                 </Box>
             </Grid>
             {matches &&
-                <Grid item xs={12} md={4}>
+                <Grid item xs={12} md={4} style={{paddingRight: '20px'}}>
                     <Clock />
                 </Grid>
             }

@@ -1,4 +1,4 @@
-import { Collection, SubCollection } from "../containers/collectionContainer";
+import { AddSubCollection, Collection, SubCollection } from "../containers/collectionContainer";
 import { Configuration } from "../containers/configurationContainer";
 import { Dashboard } from "../containers/dashboardContainer";
 import { Login, Register, Setup } from "../containers/loginContainer";
@@ -35,6 +35,12 @@ export const routeList: RouteInterface[] = [{
     rootpath: '/setup',
     component: Setup,
     routetype: 'non-drawer'
+}, {
+    name: 'Sub-Collection-add',
+    path: '/collection/:itemtype/add',
+    rootpath: '/collection',
+    component: AddSubCollection,
+    routetype: 'non-drawer',
 }, {
     name: 'Sub-Collection',
     path: '/collection/:itemtype',

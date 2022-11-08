@@ -129,15 +129,15 @@ const Login: FunctionComponent<Props> = ()  => {
                                     value={password}
                                     onChange={(event) => setPassword(event.target.value)}
                                     endAdornment={
-                                    <InputAdornment position="end">
-                                        <IconButton
-                                            onClick={() => setShowPassword(prev => !prev)}
-                                            onMouseDown={handleMouseDownPassword}
-                                            edge="end"
-                                        >
-                                            {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
-                                        </IconButton>
-                                    </InputAdornment>
+                                        <InputAdornment position="end">
+                                            <IconButton
+                                                onClick={() => setShowPassword(prev => !prev)}
+                                                onMouseDown={handleMouseDownPassword}
+                                                edge="end"
+                                            >
+                                                {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
+                                            </IconButton>
+                                        </InputAdornment>
                                     }
                                 />
                             </FormControl>

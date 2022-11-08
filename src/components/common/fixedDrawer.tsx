@@ -187,7 +187,7 @@ const FixedDrawer: FunctionComponent<Props> = ({children})  => {
             </Drawer>
             <Box sx={{width: '100%'}}>
                 {!matches &&
-                    <AppBar position="static" sx={{background: themeProperties.colors.primary}}>
+                    <AppBar position="fixed" sx={{background: themeProperties.colors.primary}}>
                         <Toolbar>
                             <Box
                                 display="flex"
@@ -212,7 +212,7 @@ const FixedDrawer: FunctionComponent<Props> = ({children})  => {
                 }
                 <Box
                     component="main"
-                    sx={{ flexGrow: 1, px: 5, py: 4 }}
+                    sx={matches ? { flexGrow: 1, px: '30px', py: '25px' } : { flexGrow: 1, px: '30px', pb: '25px', pt: '80px' }}
                 >
                     {children}
                 </Box>

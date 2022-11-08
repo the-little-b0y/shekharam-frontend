@@ -56,7 +56,7 @@ const Dashboard: FunctionComponent<Props> = ()  => {
                     <Grid item xs={12}>
                         <SuggestionBox greetingType='timed' subtext='Here is your Overall Report' />
                     </Grid>
-                    <Grid item xs={12} style={{paddingLeft: '20px', paddingRight: '20px', marginTop: '25px'}}>
+                    <Grid item xs={12} style={{paddingLeft: '15px', paddingRight: '15px', marginTop: '20px'}}>
                         <Grid container spacing={3}>
                             <Grid item xs={6} md={2}>
                                 <Box
@@ -69,9 +69,9 @@ const Dashboard: FunctionComponent<Props> = ()  => {
                                     flexDirection={'column'}
                                     sx={{backgroundColor: themeProperties.colors.secondary, cursor: 'context-menu'}}
                                 >
-                                    <Typography style={{marginTop: '5px', color: themeProperties.colors.tertiary, fontSize: themeProperties.fontSize.xs, textAlign: 'center'}}>You have added</Typography>
+                                    <Typography style={{marginTop: '5px', color: themeProperties.colors.tertiary, fontSize: themeProperties.fontSize.xs, textAlign: 'center'}}>You currently have</Typography>
                                     <Typography style={{marginTop: '5px', color: themeProperties.colors.tertiary, fontSize: themeProperties.fontSize.mdp, fontWeight: themeProperties.fontWeight.bolder, textAlign: 'center'}}>{String(itemTypes.length)}</Typography>
-                                    <Typography style={{marginTop: '5px', color: themeProperties.colors.tertiary, fontSize: themeProperties.fontSize.xs, textAlign: 'center'}}>Collection Item type{itemTypes.length > 1 ? 's' : ''}</Typography>
+                                    <Typography style={{marginTop: '5px', color: themeProperties.colors.tertiary, fontSize: themeProperties.fontSize.xs, textAlign: 'center'}}>Collection{itemTypes.length > 1 ? 's' : ''}</Typography>
                                 </Box>
                             </Grid>
                             <Grid item xs={6} md={2}>
@@ -84,10 +84,10 @@ const Dashboard: FunctionComponent<Props> = ()  => {
                                     height={'170px'}
                                     flexDirection={'column'}
                                     sx={style.addButton}
-                                    onClick={() => navigate('/configuration')}
+                                    onClick={() => navigate('/collection')}
                                 >
                                     <ArrowForwardIcon style={{color: themeProperties.colors.primary, fontSize: themeProperties.fontSize.mdp}} />
-                                    <Typography style={{marginTop: '5px', color: themeProperties.colors.tertiary, fontSize: themeProperties.fontSize.xs, textAlign: 'center'}}>Sail to Configuration, and add a <span style={{fontWeight: themeProperties.fontWeight.bolder}}>Collection Item type</span></Typography>
+                                    <Typography style={{marginTop: '5px', color: themeProperties.colors.tertiary, fontSize: themeProperties.fontSize.xs, textAlign: 'center'}}>Let's add a new <span style={{fontWeight: themeProperties.fontWeight.bolder}}>Collection</span></Typography>
                                 </Box>
                             </Grid>
                         </Grid>
