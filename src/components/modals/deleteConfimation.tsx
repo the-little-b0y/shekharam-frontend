@@ -21,10 +21,11 @@ interface Props {
     handleClose: () => void,
     confirm: () => void,
     modalHead: string,
+    warning?: string,
     deletionItem: string
 }
 
-const DeleteConfirmation: FunctionComponent<Props> = ({open, handleClose, modalHead, deletionItem, confirm})  => {
+const DeleteConfirmation: FunctionComponent<Props> = ({open, handleClose, modalHead, deletionItem, warning, confirm})  => {
     return (
         <RootModal
             open={open}
@@ -34,6 +35,9 @@ const DeleteConfirmation: FunctionComponent<Props> = ({open, handleClose, modalH
             <Box width={'100%'} sx={{textAlign: 'center'}}>
                 <WarningIcon style={{color: themeProperties.colors.error, fontSize: themeProperties.fontSize.xxl}} />
                 <Typography style={{marginTop: '10px', color: themeProperties.colors.textPrimary, fontSize: themeProperties.fontSize.smp, fontWeight: themeProperties.fontWeight.bolder}}>Continue deleting {deletionItem} ? </Typography>
+                {warning &&
+                    <Typography style={{marginTop: '10px', color: themeProperties.colors.gray, fontSize: themeProperties.fontSize.xs}}>{warning}</Typography>
+                }
                 <Grid container spacing={3}>
                     <Grid item xs={6}>
                         <Button variant="outlined" disableElevation sx={{width: '100%', marginTop: '13px'}} onClick={handleClose}>

@@ -6,6 +6,7 @@ const BACKEND_API_URL = process.env.REACT_APP_BACKEND_API_URL;
 const CONFIGURATIONSERVICE_ROUTE = `${BACKEND_API_URL}/configuration`
 const COLLECTIONITEMTYPESERVICE_ROUTE = `${CONFIGURATIONSERVICE_ROUTE}/collectionitemtype`
 const CONDITIONTYPESERVICE_ROUTE = `${CONFIGURATIONSERVICE_ROUTE}/conditiontype`
+const CURRENCYSERVICE_ROUTE = `${CONFIGURATIONSERVICE_ROUTE}/currency`
 
 export const postCollectionItemType = async (collectionItemType: CollectionItemTypeInterface) => {
     const response = await axios.post<ApiResponse>(COLLECTIONITEMTYPESERVICE_ROUTE, collectionItemType)
@@ -39,5 +40,11 @@ export const putConditionType = async (conditionType: ConditionTypeInterface) =>
 
 export const deleteConditionType = async (id: string) => {
     const response = await axios.delete<ApiResponse>(CONDITIONTYPESERVICE_ROUTE, {params: {_id: id}})
+    return response.data
+}
+
+export const putCurrency= async (currency: string) => {
+    const currencyObject = { currency }
+    const response = await axios.put<ApiResponse>(CURRENCYSERVICE_ROUTE, currencyObject)
     return response.data
 }

@@ -1,6 +1,6 @@
 import { FunctionComponent, useEffect, useState } from 'react';
 import RootModal from './rootModal';
-import { Box, TextField, Button } from '@mui/material';
+import { Box, TextField, Button, Typography } from '@mui/material';
 import { useSnackbar } from 'notistack';
 import { themeProperties } from '../../constants/themeProperties';
 import { darken } from '@mui/material/styles';
@@ -74,6 +74,7 @@ const CreateConditionType: FunctionComponent<Props> = ({open, handleClose, modal
                     InputLabelProps={{style: style.textField}}
                     onChange={(event) => setConditiontype(event.target.value)}
                 />
+                {editConditiontype && <Typography style={{marginTop: '5px', color: themeProperties.colors.gray, fontSize: themeProperties.fontSize.xxs}}>Renaming Condition Type, will take effect in respective Collection Copies</Typography>}
                 <Button variant="contained" disableElevation sx={style.saveChangesButton} onClick={editConditiontype ? updateChanges : saveChanges}>
                     {editConditiontype ? 'Update Changes' : 'Save Changes'}
                 </Button>
