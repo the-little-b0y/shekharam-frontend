@@ -1,10 +1,9 @@
 import { FunctionComponent } from 'react';
 import RootModal from './rootModal';
 import { Box } from '@mui/material';
-const QrReader = require('react-qr-scanner')
+const QrReader = require('modern-react-qr-reader')
 
 const previewStyle = {
-    height: 240,
     width: '100%'
 }
 
@@ -25,13 +24,14 @@ const ScanQrcode: FunctionComponent<Props> = ({open, handleClose, modalHead, rea
             <Box width={'100%'}>
                 <QrReader
                     delay={100}
-                    style={previewStyle}
+                    facingMode={"environment"}
                     onError={(err: any) => {}}
                     onScan={(data: any) => {
-                        if(data && data.text) {
-                            readFromScan(data.text)
+                        if(data) {
+                            readFromScan(data)
                         }
                     }}
+                    style={previewStyle}
                 />
             </Box>
         </RootModal>
