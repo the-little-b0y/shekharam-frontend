@@ -1,4 +1,4 @@
-import { FunctionComponent, useState } from 'react';
+import { FunctionComponent, useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import { Grid, Box, OutlinedInput, InputAdornment, IconButton, FormControl, InputLabel, Button, Typography, FormControlLabel, Radio } from '@mui/material';
 import { darken } from '@mui/material/styles';
@@ -41,13 +41,36 @@ const Register: FunctionComponent<Props> = ()  => {
     const [mobileNumber, setMobileNumber] = useState<string>('')
     const [showPassword, setShowPassword] = useState<boolean>(false)
     const [password, setPassword] = useState<string>('')
+    const [token, setToken] = useState<string>('')
+
+    const reCaptchaKey = (process.env && process.env.REACT_APP_RECAPTCHA_KEY) ? process.env.REACT_APP_RECAPTCHA_KEY : ''
+
+    useEffect(() => {
+        reloadCaptcha()
+    }, [])
+
+    const reloadCaptcha = () => {
+        const script = document.createElement("script")
+        script.src = `https://www.google.com/recaptcha/api.js?render=${reCaptchaKey}`
+        script.addEventListener("load", handleLoaded)
+        document.body.appendChild(script)
+    }
+
+    const handleLoaded = () => {
+        //@ts-ignore
+        window.grecaptcha.ready(() => { window.grecaptcha.execute(reCaptchaKey).then((token: string) => {
+            setToken(token)
+        })})
+    }
 
     const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
     };
 
     const register = async() => {
-        if(mobileNumber.length === 0) {
+        if(!token) {
+            enqueueSnackbar('Please Check your Internet Connection', { variant: "warning", preventDuplicate: true })
+        } else if(mobileNumber.length === 0) {
             enqueueSnackbar('Please enter a Mobile Number', { variant: "warning", preventDuplicate: true })
         } else {
             const parsedMobileNumber = parsePhoneNumber(`+${mobileNumber}`)
@@ -70,24 +93,22 @@ const Register: FunctionComponent<Props> = ()  => {
                     setLoading(true)
                     const user: PostUserInterface = {
                         mobileNumber,
-                        password
+                        password,
+                        'g-recaptcha-response': token
                     }
-                    const response = await postUser(user)
-                    enqueueSnackbar(response.message, { variant: "success", preventDuplicate: true })
-                    
+                    await postUser(user)                    
                     const response1 = await authenticate(user)
                     dispatch(setAccesstoken(response1.data.accessToken))
                     dispatch(setRefreshtoken(response1.data.refreshToken))
                     const response2 = await getUser()
                     dispatch(setUser(response1.data))
-                    enqueueSnackbar(response.message, { variant: "success", preventDuplicate: true })
                     if(response2.data.firstName) {
-                        navigate('/dashboard')
+                        window.location.replace('/dashboard')
                     } else {
-                        navigate('/setup')
+                        window.location.replace('/setup')
                     }
-                    setLoading(false)
                 } catch (error) {
+                    reloadCaptcha()
                     setLoading(false)
                 }
             }
@@ -173,6 +194,11 @@ const Register: FunctionComponent<Props> = ()  => {
                                     }
                                 />
                             </FormControl>
+                            <div
+                                className="g-recaptcha"
+                                data-sitekey={reCaptchaKey}
+                                data-size="invisible"
+                            />
                             <Button variant="contained" disableElevation sx={style.registerButton} onClick={register}>
                                 Register
                             </Button>

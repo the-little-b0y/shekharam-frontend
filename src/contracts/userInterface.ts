@@ -2,7 +2,8 @@ import { ApiResponse } from "./axiosInterface"
 
 export interface PostUserInterface {
     mobileNumber: string,
-    password: string
+    password: string,
+    'g-recaptcha-response': string
 }
 
 export interface GetUserInterface {
