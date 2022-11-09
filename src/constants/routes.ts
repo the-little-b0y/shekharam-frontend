@@ -1,6 +1,6 @@
 import { AddSubCollection, Collection, SubCollection } from "../containers/collectionContainer";
 import { Configuration } from "../containers/configurationContainer";
-import { Dashboard } from "../containers/dashboardContainer";
+import { Dashboard, ViewCollection } from "../containers/dashboardContainer";
 import { Login, Register, Setup } from "../containers/loginContainer";
 import { Profile } from "../containers/profileContainer";
 import { RouteInterface } from "../contracts/routeInterface";
@@ -21,6 +21,12 @@ export const routeList: RouteInterface[] = [{
     rootpath: '/register',
     component: Register,
     routetype: 'non-drawer'
+}, {
+    name: 'View-Collection',
+    path: '/dashboard/viewcollection',
+    rootpath: '/dashboard',
+    component: ViewCollection,
+    routetype: 'non-drawer',
 }, {
     name: 'Dashboard',
     path: '/dashboard',

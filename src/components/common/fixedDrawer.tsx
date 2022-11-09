@@ -94,6 +94,7 @@ const FixedDrawer: FunctionComponent<Props> = ({children})  => {
         dispatch(setRefreshtoken(''))
         dispatch(setUser({}))
         localStorage.clear();
+        enqueueSnackbar('Logged out', { variant: "info", preventDuplicate: true })
         navigate('/login')
     }
 

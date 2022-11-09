@@ -1,5 +1,5 @@
-import { FunctionComponent, useEffect, useState } from 'react';
-import { Grid, Box, Typography } from '@mui/material';
+import React, { FunctionComponent, useEffect, useState } from 'react';
+import { Grid, Box, Typography, Tooltip, IconButton } from '@mui/material';
 import FixedDrawer from '../../components/common/fixedDrawer';
 import SuggestionBox from '../../components/common/suggestionBox';
 import { themeProperties } from '../../constants/themeProperties';
@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 import { CollectionItemTypeInterface } from '../../contracts/configurationInterface';
 import { getConfiguration } from '../../services/configurationService';
 import Loading from '../../components/common/loading';
+import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
 
 const style = {
     addButton: {
@@ -16,6 +17,12 @@ const style = {
         cursor: 'pointer',
         '&:hover': {
             backgroundColor: darken(themeProperties.colors.secondary, 0.1)
+        }
+    },
+    actionButton: {
+        backgroundColor: themeProperties.colors.quaternary,
+        '&:hover': {
+            backgroundColor: darken(themeProperties.colors.quaternary, 0.1)
         }
     }
 }
@@ -90,6 +97,48 @@ const Dashboard: FunctionComponent<Props> = ()  => {
                                     <Typography style={{marginTop: '5px', color: themeProperties.colors.tertiary, fontSize: themeProperties.fontSize.xs, textAlign: 'center'}}>Let's add a new <span style={{fontWeight: themeProperties.fontWeight.bolder}}>Collection</span></Typography>
                                 </Box>
                             </Grid>
+                            {(itemTypes.length > 0) &&
+                                <React.Fragment>
+                                    <Grid item xs={12}>
+                                        <Typography style={{color: themeProperties.colors.tertiary, fontSize: themeProperties.fontSize.md, fontWeight: themeProperties.fontWeight.bolder}}>Your Collection</Typography>
+                                    </Grid>
+                                    {itemTypes.map((element, index) => {
+                                        return (
+                                            <Grid item xs={6} md={2} key={`grid-${String(index)}`}>
+                                                <Box
+                                                    display="flex"
+                                                    justifyContent={'center'}
+                                                    alignItems={'center'}
+                                                    borderRadius={'10px'}
+                                                    p={'20px'}
+                                                    height={'200px'}
+                                                    flexDirection={'column'}
+                                                    sx={{backgroundColor: themeProperties.colors.white, cursor: 'context-menu'}}
+                                                >
+                                                    <img style={{height: '100px'}} src={element.itemimage} alt={element.itemtype} />
+                                                    <Typography style={{marginTop: '10px', marginBottom: '5px', color: themeProperties.colors.tertiary, fontSize: themeProperties.fontSize.sm, fontWeight: themeProperties.fontWeight.bold}}>{element.itemtype}</Typography>
+                                                    <Box
+                                                        sx={{
+                                                            display: 'flex',
+                                                            justifyContent: 'space-between',
+                                                        }}
+                                                    >
+                                                        <Tooltip title="View">
+                                                            <IconButton
+                                                                size='small'
+                                                                onClick={() => navigate(`/dashboard/viewcollection?id=${element._id as string}`)}
+                                                                sx={style.actionButton}
+                                                            >
+                                                                <KeyboardArrowRight style={{color: themeProperties.colors.primary, fontSize: themeProperties.fontSize.sm}} />
+                                                            </IconButton>
+                                                        </Tooltip>
+                                                    </Box>
+                                                </Box>
+                                            </Grid>
+                                        )
+                                    })}
+                                </React.Fragment>
+                            }
                         </Grid>
                     </Grid>
                 </Grid>

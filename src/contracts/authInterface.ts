@@ -3,7 +3,8 @@ import { GetUserInterface } from "./userInterface"
 
 export interface AuthUserInterface {
     mobileNumber: string,
-    password: string
+    password: string,
+    'g-recaptcha-response': string
 }
 
 export interface ReduxInterface {
