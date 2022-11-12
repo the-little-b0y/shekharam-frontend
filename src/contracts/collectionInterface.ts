@@ -18,7 +18,8 @@ export interface CollectionInterface {
 }
 
 export interface CollectionCopyInterface {
-    id?: string,
+    _id?: string,
+    selected?: boolean,
     copyqrcode: string,
     condition: string,
     purchaseprice: string,
@@ -34,4 +35,21 @@ export interface GetCollectionReturnInterface extends ApiResponse {
 
 export interface GetSingleCollectionReturnInterface extends ApiResponse {
     data: CollectionInterface
+}
+
+export interface GetCollectionIdBySetQRInterface {
+    _id: string | null
+}
+
+export interface GetCollectionIdByCopyQRInterface {
+    _id: string | null,
+    copyid: string | null
+}
+
+export interface GetCollectionIdBySetQRReturnInterface extends ApiResponse {
+    data: GetCollectionIdBySetQRInterface
+}
+
+export interface GetCollectionIdByCopyQRReturnInterface extends ApiResponse {
+    data: GetCollectionIdByCopyQRInterface
 }

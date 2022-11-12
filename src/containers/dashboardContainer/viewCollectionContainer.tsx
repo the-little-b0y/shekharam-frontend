@@ -8,15 +8,36 @@ import { getConfiguration } from '../../services/configurationService';
 import Loading from '../../components/common/loading';
 import { CollectionInterface } from '../../contracts/collectionInterface';
 import { useSnackbar } from 'notistack';
-import { getCollection } from '../../services/collectionServices';
+import { getCollection, getSingleCollection } from '../../services/collectionServices';
 import { capitalize } from 'lodash';
 import { themeProperties } from '../../constants/themeProperties';
 import { countries } from '../../constants/countries';
 import { currencies } from '../../constants/currencies';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
+interface AccordionProps {
+    children: NonNullable<React.ReactNode>,
+    open: boolean
+}
+
 interface Props {
   
+}
+
+const AccordionComponent: FunctionComponent<AccordionProps> = ({children, open})  => {
+    if(open) {
+        return (
+            <Accordion expanded={true} elevation={0} sx={{background: themeProperties.colors.secondary, borderRadius: '10px'}}>
+                {children}
+            </Accordion>
+        )
+    } else {
+        return (
+            <Accordion elevation={0} sx={{background: themeProperties.colors.secondary, borderRadius: '10px'}}>
+                {children}
+            </Accordion>
+        )
+    }
 }
 
 const ViewCollection: FunctionComponent<Props> = ()  => {
@@ -29,6 +50,8 @@ const ViewCollection: FunctionComponent<Props> = ()  => {
     const [collection, setCollection] = useState<CollectionInterface[]>([])
     const [currency, setCurrency] = useState<CurrencyInterface>()
     const [conditionTypes, setConditionTypes] = useState<ConditionTypeInterface[]>([])
+    const [searchMode, setSearchMode] = useState<boolean>(false)
+    const [expandMode, setExpandMode] = useState<boolean>(false)
 
     useEffect(() => {
         fetchPageApis()
@@ -39,6 +62,8 @@ const ViewCollection: FunctionComponent<Props> = ()  => {
             setLoading(true)
             const response = await getConfiguration()
             const id = searchParams.get("id")
+            const collectionset = searchParams.get("collectionset")
+            const copy = searchParams.get("copy")
             if(id) {
                 const addedCollection = response.data.collectionItemTypes.find(item => item._id === id)
                 if(!addedCollection) {
@@ -53,6 +78,31 @@ const ViewCollection: FunctionComponent<Props> = ()  => {
                     const response1 = await getCollection(addedCollection._id as string)
                     setCollection(response1.data)
                 }
+            } else if(collectionset) {
+                const response1 = await getSingleCollection(collectionset)
+                setSearchMode(true)
+                if(copy) {
+                    setExpandMode(true)
+                    let returndata = response1.data
+                    const copies = returndata.copies.map(element => {
+                        if(element._id === copy) {
+                            const copydetail = {...element, ...{selected: true}}
+                            return copydetail
+                        } else {
+                            return element
+                        }
+                    })
+                    returndata = {...returndata, ...{copies: copies}}
+                    setCollection([returndata])
+                } else {
+                    setCollection([response1.data])
+                }
+                const addedCollection = response.data.collectionItemTypes.find(item => item._id === response1.data.collectionof)
+                const currencyfromdb = currencies.find(element => element.code === response.data.currency)
+                const selectedCurrency = currencyfromdb ? currencyfromdb : currencies[0]
+                setCurrency(selectedCurrency)
+                setConditionTypes(response.data ? response.data.conditionTypes : [])
+                setItemType(addedCollection)
             } else {
                 enqueueSnackbar(`id is not present. Redirecting back.`, { variant: "info", preventDuplicate: true })
                 navigate('/dashboard')
@@ -81,7 +131,7 @@ const ViewCollection: FunctionComponent<Props> = ()  => {
                                 const marketPrice = element.copies.map(cop => Number(cop.marketprice)).reduce((partialSum, a) => partialSum + a, 0)
                                 return (
                                     <Grid key={`collection-${String(index)}`} item xs={12}>
-                                        <Typography style={{marginBottom: '10px', color: themeProperties.colors.primary, fontSize: themeProperties.fontSize.mdp, fontWeight: themeProperties.fontWeight.bolder}}>{capitalize(itemType?.itemtype)} Set {String(index + 1)}</Typography>
+                                        <Typography style={{marginBottom: '10px', color: themeProperties.colors.primary, fontSize: themeProperties.fontSize.mdp, fontWeight: themeProperties.fontWeight.bolder}}>{searchMode ? `Searched ${capitalize(itemType?.itemtype)} Set` : (capitalize(itemType?.itemtype) + ' Set ' + String(index + 1))}</Typography>
                                         <Grid container spacing={3}>
                                             <Grid item xs={12} md={4}>
                                                 <Box
@@ -147,7 +197,7 @@ const ViewCollection: FunctionComponent<Props> = ()  => {
                                                 </Box>
                                             </Grid>
                                             <Grid item xs={12}>
-                                                <Accordion elevation={0} sx={{background: themeProperties.colors.secondary, borderRadius: '10px'}}>
+                                                <AccordionComponent open={expandMode}>
                                                     <AccordionSummary
                                                         style={{minHeight: '50px', height: '0px', margin: '0px'}}
                                                         expandIcon={<ExpandMoreIcon />}
@@ -162,11 +212,11 @@ const ViewCollection: FunctionComponent<Props> = ()  => {
                                                                 return (
                                                                     <Grid key={`copies-${String(index)}-${String(copindex)}`} item xs={12} md={4}>
                                                                         <Box
-                                                                            bgcolor={themeProperties.colors.quaternary}
+                                                                            bgcolor={cop.selected ? themeProperties.colors.quaternary : themeProperties.colors.white}
                                                                             borderRadius={'10px'}
                                                                             p={'20px'}
                                                                         >
-                                                                            <Typography style={{color: themeProperties.colors.tertiary, fontSize: themeProperties.fontSize.md, fontWeight: themeProperties.fontWeight.bolder}}>{capitalize(itemType?.itemtype)} Copy {String(copindex + 1)}</Typography>
+                                                                            <Typography style={{color: themeProperties.colors.tertiary, fontSize: themeProperties.fontSize.md, fontWeight: themeProperties.fontWeight.bolder}}>{capitalize(itemType?.itemtype)} Copy {String(copindex + 1)} {cop.selected && ' (Searched)'}</Typography>
                                                                             <Typography style={{marginTop: '10px', color: themeProperties.colors.textPrimary, fontSize: themeProperties.fontSize.sm}}>{capitalize(itemType?.itemtype)} Condition: {conditionTypes.find(cond => cond._id === cop.condition)?.conditiontype}</Typography>
                                                                             <Typography style={{marginTop: '3px', color: themeProperties.colors.textPrimary, fontSize: themeProperties.fontSize.sm}}>Puchase Price: {cop.purchaseprice} {currency?.expansion}</Typography>
                                                                             <Typography style={{marginTop: '3px', color: themeProperties.colors.textPrimary, fontSize: themeProperties.fontSize.sm}}>Market Price: {cop.marketprice} {currency?.expansion}</Typography>
@@ -179,7 +229,7 @@ const ViewCollection: FunctionComponent<Props> = ()  => {
                                                             })}
                                                         </Grid>
                                                     </AccordionDetails>
-                                                </Accordion>
+                                                </AccordionComponent>
                                             </Grid>
                                         </Grid>
                                     </Grid>
