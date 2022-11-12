@@ -1,5 +1,5 @@
 import React, { FunctionComponent, useEffect, useState } from 'react';
-import { Grid, Box, Typography, Tooltip, IconButton } from '@mui/material';
+import { Grid, Box, Typography, Tooltip, IconButton, Button } from '@mui/material';
 import FixedDrawer from '../../components/common/fixedDrawer';
 import SuggestionBox from '../../components/common/suggestionBox';
 import { themeProperties } from '../../constants/themeProperties';
@@ -10,6 +10,10 @@ import { CollectionItemTypeInterface } from '../../contracts/configurationInterf
 import { getConfiguration } from '../../services/configurationService';
 import Loading from '../../components/common/loading';
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
+import QrcodeTextfield from '../../components/common/qrcodeTextfield';
+import SearchIcon from '@mui/icons-material/Search';
+import { useSnackbar } from 'notistack';
+import { getCollectionIdByCopyQR, getCollectionIdBySetQR } from '../../services/collectionServices';
 
 const style = {
     addButton: {
@@ -24,6 +28,18 @@ const style = {
         '&:hover': {
             backgroundColor: darken(themeProperties.colors.quaternary, 0.1)
         }
+    },
+    textField: {
+        color: themeProperties.colors.textPrimary, 
+        fontSize: themeProperties.fontSize.xs
+    },
+    searchButton: {
+        marginLeft: '15px',
+        height: '50px',
+        backgroundColor: themeProperties.colors.primary,
+        '&:hover': {
+            backgroundColor: darken(themeProperties.colors.primary, 0.1),
+        }
     }
 }
 
@@ -33,9 +49,12 @@ interface Props {
 
 const Dashboard: FunctionComponent<Props> = ()  => {
     const navigate = useNavigate();
+    const { enqueueSnackbar } = useSnackbar();
 
     const [loading, setLoading] = useState<boolean>(false)
     const [itemTypes, setItemTypes] = useState<CollectionItemTypeInterface[]>([])
+    const [collectionSetQrcode, setCollectionSetQrcode] = useState<string>('')
+    const [copyQrcode, setCopyQrcode] = useState<string>('')
 
     useEffect(() => {
         fetchPageApis()
@@ -49,6 +68,46 @@ const Dashboard: FunctionComponent<Props> = ()  => {
             setLoading(false)
         } catch (error) {
             setLoading(false)
+        }
+    }
+
+    const searchCollectionQr = async() => {
+        if(collectionSetQrcode) {
+            try {
+                setLoading(true)
+                const response = await getCollectionIdBySetQR(collectionSetQrcode)
+                if(response.data._id) {
+                    enqueueSnackbar(`Collection Set found`, { variant: "success", preventDuplicate: true })
+                    navigate(`/dashboard/viewcollection?collectionset=${response.data._id}`) 
+                } else {
+                    enqueueSnackbar(`QR Code does not match any Collection Set`, { variant: "warning", preventDuplicate: true })
+                }
+                setLoading(false)
+            } catch (error) {
+                setLoading(false)
+            }
+        } else {
+            enqueueSnackbar(`Collection Set QR Code is not present`, { variant: "warning", preventDuplicate: true })
+        }
+    }
+
+    const searchCopyQr = async() => {
+        if(copyQrcode) {
+            try {
+                setLoading(true)
+                const response = await getCollectionIdByCopyQR(copyQrcode)
+                if(response.data._id) {
+                    enqueueSnackbar(`Collection Copy found`, { variant: "success", preventDuplicate: true })
+                    navigate(`/dashboard/viewcollection?collectionset=${response.data._id}&copy=${response.data.copyid}`) 
+                } else {
+                    enqueueSnackbar(`QR Code does not match any Collection Copy`, { variant: "warning", preventDuplicate: true })
+                }
+                setLoading(false)
+            } catch (error) {
+                setLoading(false)
+            }         
+        } else {
+            enqueueSnackbar(`Copy QR Code is not present`, { variant: "warning", preventDuplicate: true })
         }
     }
 
@@ -95,6 +154,59 @@ const Dashboard: FunctionComponent<Props> = ()  => {
                                 >
                                     <ArrowForwardIcon style={{color: themeProperties.colors.primary, fontSize: themeProperties.fontSize.mdp}} />
                                     <Typography style={{marginTop: '5px', color: themeProperties.colors.tertiary, fontSize: themeProperties.fontSize.xs, textAlign: 'center'}}>Let's add a new <span style={{fontWeight: themeProperties.fontWeight.bolder}}>Collection</span></Typography>
+                                </Box>
+                            </Grid>
+                            <Grid item xs={12} md={5}>
+                                <Box
+                                    display="flex"
+                                    justifyContent={'center'}
+                                    alignItems={'center'}
+                                    borderRadius={'10px'}
+                                    p={'20px'}
+                                    height={'170px'}
+                                    flexDirection={'column'}
+                                    sx={{backgroundColor: themeProperties.colors.secondary}}
+                                >
+                                    <Box
+                                        sx={{
+                                            display: 'flex',
+                                            flexDirection: 'row',
+                                            width: '100%'
+                                        }}
+                                    >
+                                        <QrcodeTextfield label={`Search Collection Set`} variant="outlined" value={collectionSetQrcode}
+                                            sx={{width: '100%', marginBottom: '13px',color: themeProperties.colors.textPrimary, background: themeProperties.colors.white}}
+                                            inputProps={{style: style.textField}}
+                                            InputLabelProps={{style: style.textField}}
+                                            onChange={(event) => setCollectionSetQrcode(event.target.value)}
+                                            getQr={(qrcode) => setCollectionSetQrcode(qrcode)}
+                                        />
+                                        <Button variant="contained" disableElevation sx={style.searchButton}
+                                            onClick={searchCollectionQr}
+                                        >
+                                            <SearchIcon />
+                                        </Button>
+                                    </Box>
+                                    <Box
+                                        sx={{
+                                            display: 'flex',
+                                            flexDirection: 'row',
+                                            width: '100%'
+                                        }}
+                                    >
+                                        <QrcodeTextfield label={`Search Copy`} variant="outlined" value={copyQrcode}
+                                            sx={{width: '100%', color: themeProperties.colors.textPrimary, background: themeProperties.colors.white}}
+                                            inputProps={{style: style.textField}}
+                                            InputLabelProps={{style: style.textField}}
+                                            onChange={(event) => setCopyQrcode(event.target.value)}
+                                            getQr={(qrcode) => setCopyQrcode(qrcode)}
+                                        />
+                                        <Button variant="contained" disableElevation sx={style.searchButton}
+                                            onClick={searchCopyQr}
+                                        >
+                                            <SearchIcon />
+                                        </Button>
+                                    </Box>
                                 </Box>
                             </Grid>
                             {(itemTypes.length > 0) &&

@@ -38,7 +38,7 @@ const Clock: FunctionComponent<Props> = ()  => {
                 mt={'1'}
             >
                 <AccessTimeIcon style={{color: themeProperties.colors.primary, marginRight: '7px', fontSize: themeProperties.fontSize.mdp}} />
-                <Typography>{dateNow.toLocaleString('en-GB', {hour: 'numeric', minute: 'numeric', hour12: true})}</Typography>
+                <Typography>{dateNow.toLocaleString('en-US', {hour: 'numeric', minute: 'numeric', hour12: true})}</Typography>
             </Box>
         </Box>
     );
